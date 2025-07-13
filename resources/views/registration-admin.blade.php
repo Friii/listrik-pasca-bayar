@@ -10,7 +10,7 @@
 <body>
     <div class="flex items-center justify-center min-h-screen bg-no-repeat bg-cover" style="background-image: url('/img/listrik.jpg')">
         <div class="px-2 max-w-md w-full shadow-2xl py-10 rounded-xl backdrop-blur-2xl border-slate-700 ">
-            <x-registration></x-registration>
+            <x-registration-admin></x-registration-admin>
         </div>
     </div>
 </body>

@@ -6,22 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('penggunaan', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('tarifs', function (Blueprint $table) {
+            $table->id('id_tarif');
+            $table->string('daya');
+            $table->decimal('tarifperkwh', 10, 2);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('penggunaan');
+        Schema::dropIfExists('tarifs');
+        
     }
 };

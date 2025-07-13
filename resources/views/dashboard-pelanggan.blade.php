@@ -57,22 +57,55 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 mb-5">
         <div>
-        <h2 class="text-3xl font-bold mb-8">Data Pelanggan</h2>
-        <a href="#"
-            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-200 transition">+Tambah
-            Pelanggan</a>
-        <form action="">
-        <div class="flex items-center justify-end -mt-8">
-            <input type="text" placeholder="Cari Nama Pelanggan"
-                class="py-3 pl-4 pr-24 rounded-l-xl focus:ring-1 focus:ring-slate-600">
-            <button type="submit" class="py-2.5 px-6 font-semibold pl-3 pr-5 flex gap-2 bg-blue-600 text-white rounded-r-xl">
-                <img src="img/search.png" alt="" width="20px">
-                <p class="text-xl -pl-2">Cari</p>
-            </button>
-        </div>
-        </form>
+            <h2 class="text-3xl font-bold mb-8">Data Pelanggan</h2>
+            <a href="/tambah-pelanggan"
+                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-200 transition">+Tambah
+                Pelanggan</a>
+            <form action="">
+                <div class="flex items-center justify-end -mt-8">
+                    <input type="text" placeholder="Cari Nama Pelanggan"
+                        class="py-3 pl-4 pr-24 rounded-l-xl focus:ring-1 focus:ring-slate-600">
+                    <button type="submit"
+                        class="py-2.5 px-6 font-semibold pl-3 pr-5 flex gap-2 bg-blue-600 text-white rounded-r-xl">
+                        <img src="img/search.png" alt="" width="20px">
+                        <p class="text-xl -pl-2">Cari</p>
+                    </button>
+                </div>
+            </form>
 
-        <x-dashboard-pelanggan></x-dashboard-pelanggan>
+            <div class="w-full bg-white shadow-2xl mt-4 rounded-xl">
+                <div class="max-w-full p-4">
+                    <table class="w-full border border-collapse mt-8">
+                        <thead>
+                            <tr class="">
+                                <th class="border border-slate-300">No</th>
+                                <th class="border border-slate-300">No. Kwh</th>
+                                <th class="border border-slate-300">Alamat</th>
+                                <th class="border border-slate-300">Nama Pelanggan</th>
+                                <th class="border border-slate-300">Tarif</th>
+                                <th class="border border-slate-300">Gambar</th>
+                                <th class="border border-slate-300">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $no = 1; @endphp
+                            @foreach ($data as $pelanggan)
+                                <tr>
+                                    <td class="border border-slate-300">{{ $no++ }}</td>
+                                    <td class="border border-slate-300">{{ $pelanggan->nomor_kwh }}</td>
+                                    <td class="border border-slate-300">{{ $pelanggan->alamat }}</td>
+                                    <td class="border border-slate-300">{{ $pelanggan->nama_pelanggan }}</td>
+                                    <td class="border border-slate-300">{{ $pelanggan->id_tarif }}</td>
+                                    <td class="border border-slate-300"><img src="img/admin.png" alt=""
+                                            width="20"></td>
+                                    <td class="border border-slate-300">1961</td>
+                                </tr>
+                            @endforeach 
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
     </main>
 
 </body>

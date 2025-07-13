@@ -57,22 +57,8 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 mb-5">
         <div>
-        <h2 class="text-3xl font-bold mb-8">Data Penggunaan</h2>
-        <a href="/tambah-penggunaan"
-            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-200 transition">+Tambah
-            Penggunaan</a>
-        <form action="">
-        <div class="flex items-center justify-end -mt-8">
-            <input type="text" placeholder="Cari Nama Pelanggan"
-                class="py-3 pl-4 pr-24 rounded-l-xl focus:ring-1 focus:ring-slate-600">
-            <button type="submit" class="py-2.5 px-6 font-semibold pl-3 pr-5 flex gap-2 bg-blue-600 text-white rounded-r-xl hover:bg-blue-200 transition">
-                <img src="img/search.png" alt="" width="20px">
-                <p class="text-xl -pl-2">Cari</p>
-            </button>
-        </div>
-        </form>
-
-        <x-dashboard-penggunaan></x-dashboard-penggunaan>
+        <h2 class="text-3xl font-bold mb-8">Edit Data Pelanggan</h2>
+        <x-tambah-pelanggan></x-tambah-pelanggan>
     </main>
 
 </body>

@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id('id_user');
+            $table->string('username');
+            $table->string('password');
+            $table->string('nama_admin');
+            $table->unsignedBigInteger('id_level');
+            $table->foreign('id_level')->references('id_level')->on('level')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

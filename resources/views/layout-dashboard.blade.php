@@ -40,10 +40,13 @@
         </svg>
         Data Penggunaan
       </a>
+      @auth
+          
+      
       <div class="relative top-[28rem] flex gap-2 justify-start">
       <a href="" class="flex"><img src="img/fachri.jpg" alt="profil" class="w-12 h-12 rounded-full bg-cover">
-      <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p></a>
-      
+      <p class="text-xl font-semibold text-blue-600 py-2 px-4">{{ Auth::user()->nama_admin }}</p></a>
+      @endauth
       </div>
     </nav>
   </aside>
@@ -54,7 +57,47 @@
   <main class="flex-1 p-8">
     <h2 class="text-3xl font-bold mb-4">Welcome to the Dashboard</h2>
     <p class="text-gray-600">Here is your main content area.</p>
-    <x-dashboard-main></x-dashboard-main>
+    <div class="relative w-full h-screen">
+    <div class="px-4 py-6 flex justify-center">
+        <div class="flex flex-wrap gap-4">
+            <div class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
+                <div class="justify-center ml-[90px] mt-8">
+                <img src="img/user.png" alt="user" class="w-20 h-20">
+                <h3 class="font-bold text-xl text-slate-700 -ml-8 mt-3">Total Pengguna</h3>
+                <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalPelanggan }}</h1>
+
+                </div>
+            </div>
+            <div class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
+                <div class="justify-center ml-[90px] mt-8">
+                <img src="img/bill.png" alt="user" class="w-20 h-20">
+                <h3 class="font-bold text-xl text-slate-700 -ml-6 mt-3">Total Tagihan</h3>
+                <h1 class="font-bold text-7xl text-emerald-500 ">40</h1>
+
+                </div>
+            </div>
+            <div class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
+                <div class="justify-center ml-[90px] mt-8">
+                <img src="img/billl.png" alt="user" class="w-20 h-20">
+                <h3 class="font-bold text-xl text-slate-700 -ml-24 pl-2 mt-3">Total Pembayaran Berhasil</h3>
+                <h1 class="font-bold text-7xl text-emerald-500 ">40</h1>
+
+                </div>
+            </div>
+            <div class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
+                <div class="justify-center ml-[90px] mt-8">
+                <img src="img/admin.png" alt="user" class="w-20 h-20">
+                <h3 class="font-bold text-xl text-slate-700 -ml-4 mt-3">Total Admin</h3>
+                <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalUser }}</h1>
+
+                </div>
+            </div>
+            
+        
+        </div>
+    </div>
+</div>
+
   </main>
 
 </body>

@@ -72,7 +72,37 @@
         </div>
         </form>
 
-        <x-dashboard-penggunaan></x-dashboard-penggunaan>
+        <div class="w-full bg-white shadow-2xl mt-4 rounded-xl">
+<div class="max-w-full p-4">
+<table class="w-full border border-collapse mt-8">
+  <thead>
+    <tr class="">
+      <th class="border border-slate-300">No</th>
+      <th class="border border-slate-300">No. Kwh</th>
+      <th class="border border-slate-300">Nama</th>
+      <th class="border border-slate-300">Bulan</th>
+      <th class="border border-slate-300">Tahun</th>
+      <th class="border border-slate-300">Meter Awal</th>
+      <th class="border border-slate-300">Meter Akhir</th>
+      <th class="border border-slate-300">Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach ($penggunaan as $penggunaan)
+    <tr>
+      <td class="border border-slate-300">{{ $penggunaan->id_penggunaan }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->id_pelanggan }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->bulan }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->tahun }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->meter_awal }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->meter_akhir }}</td>
+    </tr>
+    @endforeach
+  </tbody>
+</table>
+</div>
+
+</div>
     </main>
 
 </body>

@@ -1,32 +1,32 @@
 <form action="{{ route('registercheck.pelanggan') }}" method="post">
     @csrf
     <div>
-        <h2 class="text-3xl font-bold text-center">Registration</h2>
+        <h2 class="text-3xl font-bold text-center text-white">Registration</h2>
     </div>
     <div class="py-4 px-4">
         <div class="grid grid-cols-1 gap-2">
 
-            <label for="username">Username</label>
+            <label for="username" class="text-white">Username</label>
             <input type="text" name="username" id="username"
                 class="w-full bg-gray-300 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
 
-            <label for="password">Password</label>
+            <label for="password" class="text-white">Password</label>
             <input type="password" name="password" id="password"
                 class="w-full bg-gray-300 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
 
-            <label for="nomor_kwh">Nomor KWH</label>
+            <label for="nomor_kwh" class="text-white">Nomor KWH</label>
             <input type="text" name="nomor_kwh" id="nomor_kwh"
                 class="w-full bg-gray-300 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
 
-            <label for="nama_pelanggan">Nama Pelanggan</label>
+            <label for="nama_pelanggan" class="text-white">Nama Pelanggan</label>
             <input type="text" name="nama_pelanggan" id="nama_pelanggan"
                 class="w-full bg-gray-300 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
 
-            <label for="alamat">Alamat</label>
+            <label for="alamat" class="text-white">Alamat</label>
             <input type="text" name="alamat" id="alamat"
                 class="w-full bg-gray-300 rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
@@ -35,14 +35,14 @@
             <input type="hidden" name="id_level" value="2">
 
             <!-- Tampilan level (tidak bisa diubah) -->
-            <label for="level">Level</label>
+            <label for="level" class="text-white">Level</label>
             <select id="level" disabled
                 class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800">
                 <option value="2" selected>2 - Pelanggan</option>
             </select>
 
             <!-- Tarif -->
-            <label for="id_tarif">Tarif</label>
+            <label for="id_tarif" class="text-white">Tarif</label>
             <select name="id_tarif" id="id_tarif"
                 class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800"
                 required>
@@ -61,6 +61,8 @@
                 Register Now
             </button>
         </div>
-        <h2 class="text-center text-sm">
-            Sudah punya akun?
-            <a href="{{ route('login') }}" class="hover:underline hover:text-blue
+        
+        <h2 class="text-center text-sm text-white">
+  Sudah punya akun?
+  <a href="{{ route('login') }}" class="font-semibold hover:underline hover:text-blue-400">Masuk</a>
+</h2>

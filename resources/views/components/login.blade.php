@@ -1,5 +1,5 @@
 <div>
-    <h2 class="text-3xl font-bold text-center">Login Admin</h2>
+    <h2 class="text-3xl font-bold text-center">Login</h2>
 </div>
 <form action="{{ route('logincheck') }}" method="post">
     @csrf

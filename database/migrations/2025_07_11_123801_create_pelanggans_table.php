@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_tarif');
             $table->string('foto')->nullable(); // kolom untuk nama file foto
             $table->foreign('id_tarif')->references('id_tarif')->on('tarifs')->onDelete('cascade');
+            $table->unsignedBigInteger('id_level');
+            $table->foreign('id_level')->references('id_level')->on('levels')->onDelete('cascade');
         });
     }
 

@@ -6,23 +6,29 @@ use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\UserController;
 
 Route::get('/login',[UserController::class, 'login'])->name('login');
-Route::get('/registration-admin',[UserController::class, 'register'])->name('register');
+Route::get('/registration-admin',[UserController::class, 'register'])->name('register.admin');
 Route::post('login',[UserController::class, 'logincheck'])->name('logincheck');
-Route::post('registration-admin',[UserController::class, 'registercheck'])->name('registercheck');
+Route::post('registration-admin',[UserController::class, 'registercheck'])->name('registercheck.admin');
+
+Route::get('/registration-pelanggan', [PelangganController::class, 'register'])->name('register.pelanggan');
+Route::post('/registration-pelanggan', [PelangganController::class, 'registercheck'])->name('registercheck.pelanggan');
 
 Route::middleware(['auth', 'ceklevel:1'])->group(function () {
     Route::get('/layout-dashboard', [UserController::class, 'dashboardAdmin'])->name('dashboardAdmin');
 });
 
 Route::middleware(['auth', 'ceklevel:2'])->group(function () {
-    Route::get('/dashboard-pelanggan', [UserController::class, 'dashboardPelanggan'])->name('dashboard.pelanggan');
+    Route::get('/dashboard-pelanggan', [UserController::class, 'dashboardPelanggan'])->name('dashboardPelanggan');
 });
 
 Route::get('/dashboard',[UserController::class, 'goDashboard'])->name('dashboard');
 
-// Route::get('/pelanggan', function (){
-//     return view('pelanggan');
-// });
+Route::get('/pelanggan', function (){
+    return view('pelanggan');
+});
+Route::get('/registration', function (){
+    return view('registration');
+});
 
 // Route::get('/dashboard', function (){
 //     return view('layout-dashboard');
@@ -31,9 +37,8 @@ Route::get('/dashboard',[UserController::class, 'goDashboard'])->name('dashboard
 // Route::get('/dashboard-tarif', [TarifController::class, 'index']);
 
 
-// Route::get('/tambah-tarif', function (){
-//     return view('tambah-tarif');
-// });
+Route::get('/landing-page', [UserController::class, 'landingPage'])->name('landingPage');
+
 
 // Route::get('/dashboard-pelanggan', [PelangganController::class, 'index']);
 

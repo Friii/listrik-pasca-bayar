@@ -6,6 +6,7 @@ use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 use function Laravel\Prompts\alert;
 
@@ -30,6 +31,10 @@ class UserController extends Controller
         $totalUser = User::count();
         $totalPelanggan = Pelanggan::count();
         return view('layout-dashboard', ['totalUser'=>$totalUser, 'totalPelanggan'=>$totalPelanggan]);
+    }
+
+    public function landingPage(){
+        return view('tambah-tarif');
     }
 
 
@@ -74,10 +79,14 @@ class UserController extends Controller
 
         if ($user->id_level == 1) {
             return redirect()->route('dashboardAdmin');
-        } else {
-            Auth::logout();
-            return back()->withErrors(['login' => 'Anda bukan admin']);
         }
+    }
+
+    $pelanggan = \App\Models\Pelanggan::where('username', $credentials['username'])->first();
+    if ($pelanggan && Hash::check($credentials['password'], $pelanggan->password)) {
+        // Login manual pelanggan
+        session(['pelanggan_id' => $pelanggan->id_pelanggan]);
+        return redirect()->route('landingPage');
     }
 
     return back()->withErrors(['login' => 'Username atau password salah']);

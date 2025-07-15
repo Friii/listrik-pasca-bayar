@@ -7,6 +7,7 @@ use App\Models\Pelanggan;
 use App\Models\Penggunaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 
 class PelangganController extends Controller
@@ -23,6 +24,30 @@ class PelangganController extends Controller
         $penggunaan = Penggunaan::with('pelanggan')->get(); // relasi eager loading
         return view('dashboard-penggunaan', compact('penggunaan'));
     }
+
+    public function registercheck(Request $request)
+{
+    $request->validate([
+        'username' => 'required|unique:pelanggans',
+        'password' => 'required|min:6',
+        'nama_pelanggan' => 'required',
+        'nomor_kwh' => 'required|unique:pelanggans',
+        'alamat' => 'required',
+        'id_tarif' => 'required',
+    ]);
+
+    Pelanggan::create([
+        'username' => $request->username,
+        'password' => Hash::make($request->password), // ← WAJIB: enkripsi
+        'nama_pelanggan' => $request->nama_pelanggan,
+        'nomor_kwh' => $request->nomor_kwh,
+        'alamat' => $request->alamat,
+        'id_tarif' => $request->id_tarif,
+        'id_level' => 2, // atau $request->id_level
+    ]);
+
+    return redirect()->route('login')->with('success', 'Registrasi berhasil!');
+}
 
 
 

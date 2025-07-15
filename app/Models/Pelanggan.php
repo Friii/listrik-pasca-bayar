@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Pelanggan extends Model
 {
     protected $table = 'pelanggans';
-    protected $fillable = ['username', 'nomor_kwh','nama_pelanggan', 'alamat'];
+    public $timestamps = false;
+    protected $fillable = ['username', 'password', 'nomor_kwh', 'nama_pelanggan', 'alamat', 'id_tarif', 'id_level'];
+
 }
 

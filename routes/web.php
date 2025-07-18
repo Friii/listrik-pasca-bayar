@@ -10,8 +10,14 @@ Route::get('/registration-admin',[UserController::class, 'register'])->name('reg
 Route::post('login',[UserController::class, 'logincheck'])->name('logincheck');
 Route::post('registration-admin',[UserController::class, 'registercheck'])->name('registercheck.admin');
 
-Route::get('/registration-pelanggan', [PelangganController::class, 'register'])->name('register.pelanggan');
-Route::post('/registration-pelanggan', [PelangganController::class, 'registercheck'])->name('registercheck.pelanggan');
+Route::get('/registration-pelanggan', [PelangganController::class, 'pelanggan'])->name('register.pelanggan');
+Route::post('/registration-pelanggan', [PelangganController::class, 'pelanggancheck'])->name('registercheck.pelanggan');
+
+Route::get('/dashboard-tarif', [TarifController::class, 'index'])->name('tarif.pelanggan');
+Route::post('/dashboard-tarif', [TarifController::class, 'store'])->name('tarifcheck.pelanggan');
+
+Route::get('/dashboard-tagihan', [PelangganController::class, 'tagihan'])->name('tagihan.pelanggan');
+Route::post('/dashboard-tagihan', [PelangganController::class, 'tagihancheck'])->name('tagihancheck.pelanggan');
 
 Route::middleware(['auth', 'ceklevel:1'])->group(function () {
     Route::get('/layout-dashboard', [UserController::class, 'dashboardAdmin'])->name('dashboardAdmin');
@@ -34,15 +40,15 @@ Route::get('/registration', function (){
 //     return view('layout-dashboard');
 // });
 
-// Route::get('/dashboard-tarif', [TarifController::class, 'index']);
 
 
 Route::get('/landing-page', [UserController::class, 'landingPage'])->name('landingPage');
 
 
-// Route::get('/dashboard-pelanggan', [PelangganController::class, 'index']);
+Route::get('/dashboard-pelanggan', [PelangganController::class, 'index'])->name('tambah.pelanggan');
+Route::post('dashboard-pelanggan',[PelangganController::class, 'pelanggancheck'])->name('pelanggancheck.admin');
 
-// Route::get('/dashboard-penggunaan', [PelangganController::class, 'penggunaann']);
+Route::get('/dashboard-penggunaan', [PelangganController::class, 'penggunaann']);
 
 // Route::get('/tambah-pelanggan', function (){
 //     return view('tambah-pelanggan');

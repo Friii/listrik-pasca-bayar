@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Penggunaan extends Model
 {
     protected $table = 'penggunaans'; // pastikan nama tabel benar
-
+    protected $primaryKey = 'id_penggunaan';
     protected $fillable = [
         'id_pelanggan',
         'bulan',
@@ -16,9 +16,11 @@ class Penggunaan extends Model
         'meter_akhir',
     ];
 
-    // ✅ Tambahkan relasi ini:
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'id_pelanggan', 'id_pelanggan');
     }
+
+
+
 }

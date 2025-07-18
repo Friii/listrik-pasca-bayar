@@ -26,6 +26,7 @@ class UserController extends Controller
     {
         return view('registration-admin');
     }
+
     public function dashboardAdmin()
     {
         $totalUser = User::count();
@@ -36,9 +37,6 @@ class UserController extends Controller
     public function landingPage(){
         return view('tambah-tarif');
     }
-
-
-
 
     public function registercheck(Request $request)
     {
@@ -56,9 +54,9 @@ class UserController extends Controller
         ]);
 
         Auth::login($user);
-
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil!');
     }
+    
 
 
     public function goDashboard()

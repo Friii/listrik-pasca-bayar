@@ -23,24 +23,24 @@
             </a>
             <a href="/dashboard-tarif"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M8 7v10M16 7v10M12 5v14" />
-                </svg>
+                <img src="img/tax.png" alt="bil" class="w-5 h-5 mr-2">
                 Data Tarif
             </a>
             <a href="/dashboard-pelanggan"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M5 13l4 4L19 7" />
-                </svg>
+                <img src="img/use.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pelanggan
             </a>
             <a href="/dashboard-penggunaan"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
+                <img src="img/penggunaan.png" alt="user" class="w-5 h-5 mr-2">
                 Data Penggunaan
+            </a>
+
+            <a href="/dashboard-tagihan"
+                class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
+                <img src="img/tagihan.png" alt="user" class="w-5 h-5 mr-2">
+                Data Tagihan
             </a>
             <div class="relative top-[28rem] flex gap-2 justify-start">
                 <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
@@ -58,9 +58,9 @@
     <main class="flex-1 p-8 mb-5">
 
         <h2 class="text-3xl font-bold mb-8">Data Tarif</h2>
-        <a href="/tambah-tarif"
+        <button onclick="openModal()"
             class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-200 transition">+Tambah
-            Tarif</a>
+            Tarif</button>
         <div class="w-full bg-white shadow-2xl mt-4 rounded-xl">
             <div class="max-w-full p-4">
                 <table class="w-full border border-collapse mt-8">
@@ -90,7 +90,48 @@
             </div>
         </div>
 
+        <div id="modalTarif"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+                    <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
+
+                    <form action="{{ route('tarifcheck.pelanggan') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block font-semibold">Daya</label>
+                            <input type="text" name="daya" required class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block font-semibold">Tarif PerKWH</label>
+                            <input type="text" name="tarifperkwh" required class="w-full p-2 border rounded">
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="closeModal()"
+                                class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                            <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+                        </div>
+                    </form>
+
+                    <button onclick="closeModal()"
+                        class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+                </div>
+            </div>
+
     </main>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalTarif').classList.remove('hidden');
+            document.getElementById('modalTarif').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('modalTarif').classList.add('hidden');
+            document.getElementById('modalTarif').classList.remove('flex');
+        }
+    </script>
 
 </body>
 

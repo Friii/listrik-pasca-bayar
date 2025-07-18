@@ -23,24 +23,24 @@
             </a>
             <a href="/dashboard-tarif"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M8 7v10M16 7v10M12 5v14" />
-                </svg>
+                <img src="img/tax.png" alt="bil" class="w-5 h-5 mr-2">
                 Data Tarif
             </a>
             <a href="/dashboard-pelanggan"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M5 13l4 4L19 7" />
-                </svg>
+                <img src="img/use.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pelanggan
             </a>
             <a href="/dashboard-penggunaan"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
+                <img src="img/penggunaan.png" alt="user" class="w-5 h-5 mr-2">
                 Data Penggunaan
+            </a>
+
+            <a href="/dashboard-tagihan"
+                class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
+                <img src="img/tagihan.png" alt="user" class="w-5 h-5 mr-2">
+                Data Tagihan
             </a>
             <div class="relative top-[28rem] flex gap-2 justify-start">
                 <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
@@ -51,7 +51,6 @@
             </div>
         </nav>
     </aside>
-
 
 
     <!-- Main Content -->
@@ -88,14 +87,19 @@
     </tr>
   </thead>
   <tbody>
+    @php $no = 1; @endphp
     @foreach ($penggunaan as $penggunaan)
     <tr>
-      <td class="border border-slate-300">{{ $penggunaan->id_penggunaan }}</td>
-      <td class="border border-slate-300">{{ $penggunaan->id_pelanggan }}</td>
+      <td class="border border-slate-300">{{ $no++ }}</td> 
+      <td class="border border-slate-300">{{ $penggunaan->pelanggan->nomor_kwh }}</td> 
+      <td class="border border-slate-300">{{ $penggunaan->pelanggan->nama_pelanggan }}</td> 
       <td class="border border-slate-300">{{ $penggunaan->bulan }}</td>
       <td class="border border-slate-300">{{ $penggunaan->tahun }}</td>
       <td class="border border-slate-300">{{ $penggunaan->meter_awal }}</td>
-      <td class="border border-slate-300">{{ $penggunaan->meter_akhir }}</td>
+      <td class="border border-slate-300">{{ $penggunaan->meter_ahir }}</td>
+      <td class="border border-slate-300">
+        <a href="" class="w-10 h-10 bg-red">Hapus</a>
+      </td>
     </tr>
     @endforeach
   </tbody>

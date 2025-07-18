@@ -16,7 +16,6 @@ return new class extends Migration
             $table->date('tanggal_pembayaran');
             $table->decimal('biaya_admin', 10, 2);
             $table->decimal('total_bayar', 10, 2);
-
             $table->foreign('id_tagihan')->references('id_tagihan')->on('tagihans')->onDelete('cascade');
             $table->foreign('id_pelanggan')->references('id_pelanggan')->on('pelanggans')->onDelete('cascade');
             $table->foreign('id_user')->references('id_user')->on('user')->onDelete('cascade');

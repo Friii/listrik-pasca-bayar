@@ -57,10 +57,10 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 mb-5">
         <div>
-            <h2 class="text-3xl font-bold mb-8">Data Pelanggan</h2>
+            <h2 class="text-3xl font-bold mb-8">Data Tagihan</h2>
             <button onclick="openModal()"
                 class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition">
-                + Tambah Pelanggan
+                + Tambah Tagihan
             </button>
 
             <form action="">
@@ -81,25 +81,25 @@
                         <thead>
                             <tr class="">
                                 <th class="border border-slate-300">No</th>
-                                <th class="border border-slate-300">No. Kwh</th>
-                                <th class="border border-slate-300">Alamat</th>
+                                <th class="border border-slate-300">Id Tagihan</th>
+                                <th class="border border-slate-300">Id Penggunaan</th>
                                 <th class="border border-slate-300">Nama Pelanggan</th>
-                                <th class="border border-slate-300">Tarif</th>
-                                <th class="border border-slate-300">Gambar</th>
-                                <th class="border border-slate-300">Aksi</th>
+                                <th class="border border-slate-300">Bulan</th>
+                                <th class="border border-slate-300">Tahun</th>
+                                <th class="border border-slate-300">Jumlah Meter</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php $no = 1; @endphp
-                            @foreach ($data as $pelanggan)
+                            @foreach ($data as $tagihan)
                                 <tr>
                                     <td class="border border-slate-300">{{ $no++ }}</td>
-                                    <td class="border border-slate-300">{{ $pelanggan->nomor_kwh }}</td>
-                                    <td class="border border-slate-300">{{ $pelanggan->alamat }}</td>
-                                    <td class="border border-slate-300">{{ $pelanggan->nama_pelanggan }}</td>
-                                    <td class="border border-slate-300">{{ $pelanggan->id_tarif }}</td>
-                                    <td class="border border-slate-300"><img src="img/admin.png" alt=""
-                                            width="20"></td>
+                                    <td class="border border-slate-300">{{ $tagihan->id_tagihan }}</td>
+                                    <td class="border border-slate-300">{{ $tagihan->id_penggunaan }}</td>
+                                    {{-- <td class="border border-slate-300">{{ $tagihan->pelanggan }}</td> --}}
+                                    <td class="border border-slate-300">{{ $tagihan->bulan }}</td>
+                                    <td class="border border-slate-300">{{ $tagihan->tahun }}</td>
+                                    <td class="border border-slate-300">{{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}</td>
                                     <td class="border border-slate-300"><button onclick="openModal()"
                 class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover" style="background-image: url('img/edit.png')">
             </button>

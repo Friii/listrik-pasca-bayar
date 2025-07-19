@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Tagihan extends Model
 {
     protected $table = 'tagihans';
-    protected $fillable = ['id_tagihan', 'id_pelanggan', 'id_penggunaan'];
+    protected $fillable = ['id_tagihan','id_pelanggan', 'id_penggunaan', 'bulan', 'tahun', 'jumlah_meter','status'];
+    public $timestamps = false;
+    public $incrementing = false;
+
 
     public function pelanggan()
     {

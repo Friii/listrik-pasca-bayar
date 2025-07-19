@@ -8,7 +8,9 @@ class Penggunaan extends Model
 {
     protected $table = 'penggunaans'; // pastikan nama tabel benar
     protected $primaryKey = 'id_penggunaan';
+    public $incrementing = false;
     protected $fillable = [
+        'id_penggunaan',
         'id_pelanggan',
         'bulan',
         'tahun',

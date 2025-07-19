@@ -14,7 +14,7 @@
     <aside class="w-64 bg-white shadow-md h-screen px-4 py-6">
         <h1 class="text-2xl font-bold mb-6 text-blue-600">Dashboard</h1>
         <nav class="space-y-2">
-            <a href="/dashboard"
+            <a href="/layout-dashboard"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
@@ -87,6 +87,8 @@
                                 <th class="border border-slate-300">Bulan</th>
                                 <th class="border border-slate-300">Tahun</th>
                                 <th class="border border-slate-300">Jumlah Meter</th>
+                                <th class="border border-slate-300">Status</th>
+                                <th class="border border-slate-300">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -96,16 +98,22 @@
                                     <td class="border border-slate-300">{{ $no++ }}</td>
                                     <td class="border border-slate-300">{{ $tagihan->id_tagihan }}</td>
                                     <td class="border border-slate-300">{{ $tagihan->id_penggunaan }}</td>
-                                    {{-- <td class="border border-slate-300">{{ $tagihan->pelanggan }}</td> --}}
+                                    <td class="border border-slate-300">{{ $tagihan->pelanggan->nama_pelanggan }}</td>
                                     <td class="border border-slate-300">{{ $tagihan->bulan }}</td>
                                     <td class="border border-slate-300">{{ $tagihan->tahun }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}</td>
+                                    <td class="border border-slate-300">
+                                        {{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}</td>
+                                        
+                                    <td class="border border-slate-300">{{ $tagihan->status }}</td>
                                     <td class="border border-slate-300"><button onclick="openModal()"
-                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover" style="background-image: url('img/edit.png')">
-            </button>
-        <button onclick="openModal()"
-                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover" style="background-image: url('img/edit.png')">
-            </button></td>
+                                            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover"
+                                            style="background-image: url('img/edit.png')">
+                                        </button>
+                                        <button onclick="openModal()"
+                                            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover"
+                                            style="background-image: url('img/edit.png')">
+                                        </button>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -114,36 +122,67 @@
 
             </div>
             <!-- Modal Tambah Pelanggan -->
-            <div id="modalPelanggan"
-                class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div id="modalTagihan" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
                     <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
 
-                    <form action="{{ route('pelanggancheck.admin') }}" method="POST" class="space-y-4">
+                    <form action="{{ route('tagihancheck.pelanggan') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block font-semibold">No. Kwh</label>
-                            <input type="text" name="nomor_kwh" required class="w-full p-2 border rounded">
+                            <select name="id_pelanggan" id="id_pelanggan"
+                                class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800"
+                                required>
+                                <option value="">-- Pilih Pelanggan --</option>
+                                @foreach ($penggunaan as $item)
+                                    <option value="{{ $item->pelanggan->id_pelanggan }}">
+                                        {{ $item->pelanggan->nomor_kwh }} - {{ $item->pelanggan->nama_pelanggan }}
+                                    </option>
+                                @endforeach
+
+                            </select>
                         </div>
                         <div>
-                            <label class="block font-semibold">Nama Pelanggan</label>
-                            <input type="text" name="nama_pelanggan" required class="w-full p-2 border rounded">
+                            <select name="id_penggunaan" id="id_penggunaan"
+                                class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800"
+                                required>
+                                <option value="">-- Pilih Penggunaan --</option>
+                                @foreach ($penggunaan as $item)
+                                    <option value="{{ $item->id_penggunaan }}">
+                                        {{ $item->pelanggan->id_pelanggan }}
+                                    </option>
+                                @endforeach
+                            </select>
+
                         </div>
                         <div>
-                            <label class="block font-semibold">Alamat</label>
-                            <input type="text" name="alamat" required class="w-full p-2 border rounded">
+                            <select name="bulan" id="bulan"
+                                class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800"
+                                required>
+                                <option value="">-- Pilih Bulan --</option>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+
+                            </select>
                         </div>
                         <div>
-                            <label class="block font-semibold">Tarif</label>
-                            <input type="number" name="id_tarif" required class="w-full p-2 border rounded">
+                            <label class="block font-semibold">Tahun</label>
+                            <input type="text" name="tahun" id="tahun" required
+                                class="w-full p-2 border rounded">
                         </div>
                         <div>
-                            <label class="block font-semibold">Username</label>
-                            <input type="text" name="username" required class="w-full p-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block font-semibold">Password</label>
-                            <input type="password" name="password" required class="w-full p-2 border rounded">
+                            <label class="block font-semibold">Jumlah Meter</label>
+                            <input type="text" name="jumlah_meter" id="jumlah_meter"
+                                class="w-full p-2 border rounded" readonly>
                         </div>
 
                         <div class="flex justify-end space-x-2">
@@ -163,15 +202,49 @@
 
     <script>
         function openModal() {
-            document.getElementById('modalPelanggan').classList.remove('hidden');
-            document.getElementById('modalPelanggan').classList.add('flex');
+            document.getElementById('modalTagihan').classList.remove('hidden');
+            document.getElementById('modalTagihan').classList.add('flex');
         }
 
         function closeModal() {
-            document.getElementById('modalPelanggan').classList.add('hidden');
-            document.getElementById('modalPelanggan').classList.remove('flex');
+            document.getElementById('modalTagihan').classList.add('hidden');
+            document.getElementById('modalTagihan').classList.remove('flex');
         }
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectPelanggan = document.querySelector('#id_pelanggan');
+            const selectBulan = document.querySelector('#bulan');
+            const inputTahun = document.querySelector('#tahun');
+            const jumlahMeterInput = document.querySelector('#jumlah_meter');
+
+            function fetchJumlahMeter() {
+                const idPelanggan = selectPelanggan.value;
+                const bulan = selectBulan.value;
+                const tahun = inputTahun.value;
+
+                if (idPelanggan && bulan && tahun) {
+                    fetch(`/api/jumlah-meter/${idPelanggan}?bulan=${bulan}&tahun=${tahun}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            jumlahMeterInput.value = data.jumlah_meter ?? '';
+                        })
+                        .catch(error => {
+                            console.error('Gagal ambil jumlah meter:', error);
+                            jumlahMeterInput.value = '';
+                        });
+                }
+            }
+
+            selectPelanggan.addEventListener('change', fetchJumlahMeter);
+            selectBulan.addEventListener('change', fetchJumlahMeter);
+            inputTahun.addEventListener('input', fetchJumlahMeter);
+        });
+    </script>
+
+
+
 
 
 </body>

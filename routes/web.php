@@ -16,8 +16,14 @@ Route::post('/registration-pelanggan', [PelangganController::class, 'pelangganch
 Route::get('/dashboard-tarif', [TarifController::class, 'index'])->name('tarif.pelanggan');
 Route::post('/dashboard-tarif', [TarifController::class, 'store'])->name('tarifcheck.pelanggan');
 
+Route::get('/dashboard-penggunaan', [PelangganController::class, 'penggunaan'])->name('penggunaan.pelanggan');
+Route::post('/dashboard-penggunaan', [PelangganController::class, 'penggunaancheck'])->name('penggunaancheck.pelanggan');
+
 Route::get('/dashboard-tagihan', [PelangganController::class, 'tagihan'])->name('tagihan.pelanggan');
 Route::post('/dashboard-tagihan', [PelangganController::class, 'tagihancheck'])->name('tagihancheck.pelanggan');
+
+Route::get('/api/jumlah-meter/{id_pelanggan}', [PelangganController::class, 'getJumlahMeter']);
+
 
 Route::middleware(['auth', 'ceklevel:1'])->group(function () {
     Route::get('/layout-dashboard', [UserController::class, 'dashboardAdmin'])->name('dashboardAdmin');
@@ -48,7 +54,6 @@ Route::get('/landing-page', [UserController::class, 'landingPage'])->name('landi
 Route::get('/dashboard-pelanggan', [PelangganController::class, 'index'])->name('tambah.pelanggan');
 Route::post('dashboard-pelanggan',[PelangganController::class, 'pelanggancheck'])->name('pelanggancheck.admin');
 
-Route::get('/dashboard-penggunaan', [PelangganController::class, 'penggunaann']);
 
 // Route::get('/tambah-pelanggan', function (){
 //     return view('tambah-pelanggan');

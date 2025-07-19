@@ -14,7 +14,7 @@
     <aside class="w-64 bg-white shadow-md h-screen px-4 py-6">
         <h1 class="text-2xl font-bold mb-6 text-blue-600">Dashboard</h1>
         <nav class="space-y-2">
-            <a href="/dashboard"
+            <a href="/layout-dashboard"
                 class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />

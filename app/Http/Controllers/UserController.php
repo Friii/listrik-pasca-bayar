@@ -31,10 +31,11 @@ class UserController extends Controller
     {
         $totalUser = User::count();
         $totalPelanggan = Pelanggan::count();
-        return view('layout-dashboard', ['totalUser'=>$totalUser, 'totalPelanggan'=>$totalPelanggan]);
+        return view('layout-dashboard', ['totalUser' => $totalUser, 'totalPelanggan' => $totalPelanggan]);
     }
 
-    public function landingPage(){
+    public function landingPage()
+    {
         return view('tambah-tarif');
     }
 
@@ -45,8 +46,12 @@ class UserController extends Controller
             'password'   => 'required',
             'nama_admin' => 'required'
         ]);
+        do {
+            $id = random_int(10000, 99999);
+        } while (User::where('id_user', $id)->exists());
 
         $user = User::create([
+            'id_user'    => $id,
             'username'   => $validation['username'],
             'password'   => bcrypt($validation['password']),
             'nama_admin' => $validation['nama_admin'],
@@ -56,7 +61,7 @@ class UserController extends Controller
         Auth::login($user);
         return redirect()->route('login')->with('success', 'Registrasi berhasil!');
     }
-    
+
 
 
     public function goDashboard()
@@ -66,28 +71,27 @@ class UserController extends Controller
         }
     }
     public function logincheck(Request $request)
-{
-    $credentials = $request->validate([
-        'username' => 'required',
-        'password' => 'required',
-    ]); // hasil true / false
+    {
+        $credentials = $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]); // hasil true / false
 
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
 
-        if ($user->id_level == 1) {
-            return redirect()->route('dashboardAdmin');
+            if ($user->id_level == 1) {
+                return redirect()->route('dashboardAdmin');
+            }
         }
+
+        $pelanggan = \App\Models\Pelanggan::where('username', $credentials['username'])->first();
+        if ($pelanggan && Hash::check($credentials['password'], $pelanggan->password)) {
+            // Login manual pelanggan
+            session(['pelanggan_id' => $pelanggan->id_pelanggan]);
+            return redirect()->route('landingPage');
+        }
+
+        return back()->withErrors(['login' => 'Username atau password salah']);
     }
-
-    $pelanggan = \App\Models\Pelanggan::where('username', $credentials['username'])->first();
-    if ($pelanggan && Hash::check($credentials['password'], $pelanggan->password)) {
-        // Login manual pelanggan
-        session(['pelanggan_id' => $pelanggan->id_pelanggan]);
-        return redirect()->route('landingPage');
-    }
-
-    return back()->withErrors(['login' => 'Username atau password salah']);
-}
-
 }

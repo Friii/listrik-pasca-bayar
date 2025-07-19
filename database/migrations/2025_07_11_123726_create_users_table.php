@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user', function (Blueprint $table) {
-            $table->id('id_user');
+            $table->unsignedBigInteger('id_user')->primary(); // Tanpa auto-increment
             $table->string('username');
             $table->string('password');
             $table->string('nama_admin');

@@ -47,13 +47,31 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                            
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex"><p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
@@ -64,26 +82,29 @@
         <div>
             <h2 class="text-3xl font-bold mb-8">Data Pelanggan</h2>
             <button onclick="openModal()"
-    class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-    Tambah Pelanggan
-</button>
+                class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Pelanggan
+            </button>
 
 
-            <form action="">
+            <form action="{{ route('pelanggan') }}" method="GET">
                 <div class="flex items-center justify-end -mt-8">
-                    <input type="text" placeholder="Cari Nama Pelanggan"
+                    <input type="text" name="search" placeholder="Cari Nama Pelanggan"
+                        value="{{ request('search') }}"
                         class="py-3 pl-4 pr-24 rounded-l-xl focus:ring-1 focus:ring-slate-600">
+
                     <button type="submit"
-                        class="py-2.5 px-6 font-semibold pl-3 pr-5 flex gap-2 bg-blue-600 text-white rounded-r-xl">
-                        <img src="img/search.png" alt="" width="20px">
+                        class="py-2.5 px-6 font-semibold pl-2 pr-5 flex gap-2 bg-blue-600 text-white rounded-r-xl">
+                        <img src="img/search.png" alt="" width="30px" height="20px">
                         <p class="text-xl -pl-2">Cari</p>
                     </button>
                 </div>
             </form>
+
 
             <div class="w-full bg-white shadow-xl mt-6 rounded-xl overflow-x-auto">
                 <div class="p-6">
@@ -117,15 +138,24 @@
                                             class="w-8 h-8 mx-auto rounded-full">
                                     </td>
                                     <td class="px-4 py-2 text-center space-x-2">
-                                        <button onclick="openModal()"
+                                        <button onclick="editModal({{ $pelanggan }})"
                                             class="inline-flex items-center px-3 py-1 bg-yellow-500 text-white text-xs font-medium rounded hover:bg-yellow-600 transition">
                                             ✏️ Edit
                                         </button>
-                                        <button onclick="confirm('Yakin ingin hapus?')"
-                                            class="inline-flex items-center px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition">
-                                            🗑 Hapus
-                                        </button>
+
+                                        <form action="{{ route('pelanggan.destroy', $pelanggan->id_pelanggan) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus pelanggan ini?')"
+                                            class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-flex items-center px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition">
+                                                🗑 Hapus
+                                            </button>
+                                        </form>
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -140,8 +170,9 @@
             <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
                 <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
 
-                <form action="{{ route('pelanggancheck.admin') }}" method="POST" class="space-y-4">
+                <form action="{{ route('pelanggan.store') }}" method="POST" class="space-y-4" id="formPelanggan">
                     @csrf
+                    <input type="hidden" name="_method" id="formMethod" value="PUT">
                     <div>
                         <label class="block font-semibold">No. Kwh</label>
                         <input type="text" name="nomor_kwh" required class="w-full p-2 border rounded">
@@ -181,6 +212,65 @@
         </div>
 
     </main>
+
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+
+            if (menu.classList.contains('opacity-0')) {
+                menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+            } else {
+                menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            }
+        }
+
+        // Optional: Auto-close if click outside
+        document.addEventListener('click', function(e) {
+            const button = document.querySelector('button[onclick="toggleDropdown()"]');
+            const dropdown = document.getElementById('dropdownMenu');
+            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                dropdown.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            }
+        });
+    </script>
+
+
+    <script>
+        function openModal() {
+            document.getElementById('modalPelanggan').classList.remove('hidden');
+            document.getElementById('modalPelanggan').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('modalPelanggan').classList.add('hidden');
+            document.getElementById('modalPelanggan').classList.remove('flex');
+
+            // Reset form ke default
+            document.getElementById('formPelanggan').action = "{{ route('pelanggan.store') }}";
+            document.getElementById('formMethod').value = "POST";
+            document.querySelectorAll('#formPelanggan input').forEach(input => input.value = '');
+        }
+
+        function editModal(pelanggan) {
+            openModal();
+
+            const form = document.getElementById('formPelanggan');
+            form.action = `/pelanggan/update/${pelanggan.id_pelanggan}`;
+            document.getElementById('formMethod').value = "PUT"; // ← Ini WAJIB agar Laravel tahu itu update
+
+            // isi input field
+            form.nomor_kwh.value = pelanggan.nomor_kwh;
+            form.nama_pelanggan.value = pelanggan.nama_pelanggan;
+            form.alamat.value = pelanggan.alamat;
+            form.id_tarif.value = pelanggan.id_tarif;
+            form.username.value = pelanggan.username;
+            form.password.value = '';
+        }
+    </script>
+
 
     <script>
         function openModal() {

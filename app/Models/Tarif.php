@@ -9,6 +9,7 @@ class Tarif extends Model
     protected $table = 'tarifs';
     protected $fillable = ['daya', 'tarifperkwh'];
     public $timestamps = false;
+    protected $primaryKey = 'id_tarif';
 
     public function pelanggan()
     {

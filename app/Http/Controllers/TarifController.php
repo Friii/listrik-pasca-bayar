@@ -43,4 +43,27 @@ class TarifController extends Controller
 
         return redirect()->back()->with('success', 'Data tarif berhasil ditambahkan');
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'daya' => 'required',
+            'tarifperkwh' => 'required|numeric',
+        ]);
+
+        $tarif = Tarif::findOrFail($id);
+        $tarif->daya = $request->daya;
+        $tarif->tarifperkwh = $request->tarifperkwh;
+        $tarif->save();
+
+        return redirect()->back()->with('success', 'Data tarif berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $tarif = Tarif::findOrFail($id);
+        $tarif->delete();
+
+        return redirect()->back()->with('success', 'Data tarif berhasil dihapus!');
+    }
 }

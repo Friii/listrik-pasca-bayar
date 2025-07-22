@@ -47,13 +47,31 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                            
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex"><p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
@@ -64,29 +82,44 @@
 
         <h2 class="text-3xl font-bold mb-8">Data Tarif</h2>
         <button onclick="openModal()"
-            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-200 transition">+Tambah
-            Tarif</button>
-        <div class="w-full bg-white shadow-2xl mt-4 rounded-xl">
-            <div class="max-w-full p-4">
-                <table class="w-full border border-collapse mt-8">
+            class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Tarif</button>
+        <div class="w-full bg-white shadow-xl mt-6 rounded-xl overflow-x-auto">
+            <div class="p-6">
+                <table class="min-w-full text-sm text-gray-800">
                     <thead>
-                        <tr>
-                            <th class="border border-slate-300">No</th>
-                            <th class="border border-slate-300">Daya</th>
-                            <th class="border border-slate-300">Tarif</th>
-                            <th class="border border-slate-300">Aksi</th>
+                        <tr class="bg-sky-800 text-white uppercase text-xs tracking-wider">
+                            <th class="px-4 py-3 text-left">No</th>
+                            <th class="px-4 py-3 text-left">Daya</th>
+                            <th class="px-4 py-3 text-left">Tarif / KWh</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-gray-200">
                         @php $no = 1; @endphp
                         @foreach ($data as $tarif)
-                            <tr>
-                                <td class="border border-slate-300 text-center">{{ $no++ }}</td>
-                                <td class="border border-slate-300 text-center">{{ $tarif->daya }}</td>
-                                <td class="border border-slate-300 text-center">{{ $tarif->tarifperkwh }}</td>
-                                <td class="border border-slate-300 text-center">
-                                    <button class="text-blue-500">Edit</button>
-                                    <button class="text-red-500">Hapus</button>
+                            <tr class="hover:bg-gray-100 transition duration-150">
+                                <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2">{{ $tarif->daya }}</td>
+                                <td class="px-4 py-2">Rp {{ number_format($tarif->tarifperkwh, 0, ',', '.') }}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <button
+                                        onclick="openEditTarifModal({{ $tarif->id_tarif }}, '{{ $tarif->daya }}', '{{ $tarif->tarifperkwh }}')"
+                                        class="inline-block px-3 py-1 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 text-xs font-semibold">✎
+                                        Edit</button>
+                                    <form action="{{ route('tarif.destroy', $tarif->id_tarif) }}" method="POST"
+                                        class="inline-block"
+                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="inline-block px-3 py-1 bg-red-600 text-white rounded-full hover:bg-red-700 text-xs font-semibold">🗑
+                                            Hapus</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -95,36 +128,83 @@
             </div>
         </div>
 
-        <div id="modalTarif"
-                class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
-                    <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
 
-                    <form action="{{ route('tarifcheck.pelanggan') }}" method="POST" class="space-y-4">
-                        @csrf
-                        <div>
-                            <label class="block font-semibold">Daya</label>
-                            <input type="text" name="daya" required class="w-full p-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block font-semibold">Tarif PerKWH</label>
-                            <input type="text" name="tarifperkwh" required class="w-full p-2 border rounded">
-                        </div>
+        <div id="modalTarif" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+                <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
 
-                        <div class="flex justify-end space-x-2">
-                            <button type="button" onclick="closeModal()"
-                                class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
-                        </div>
-                    </form>
+                <form action="{{ route('tarifcheck.pelanggan') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block font-semibold">Daya</label>
+                        <input type="text" name="daya" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">Tarif PerKWH</label>
+                        <input type="text" name="tarifperkwh" required class="w-full p-2 border rounded">
+                    </div>
 
-                    <button onclick="closeModal()"
-                        class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
-                </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeModal()"
+                            class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+                    </div>
+                </form>
+
+                <button onclick="closeModal()"
+                    class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
             </div>
+        </div>
+
+        <div id="modalEditTarif" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+                <h2 class="text-2xl font-bold mb-4">Edit Tarif</h2>
+                <form id="formEditTarif" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block font-semibold">Daya</label>
+                        <input type="text" id="edit_daya" name="daya" required
+                            class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">Tarif PerKWH</label>
+                        <input type="text" id="edit_tarifperkwh" name="tarifperkwh" required
+                            class="w-full p-2 border rounded">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeEditTarifModal()"
+                            class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+                    </div>
+                </form>
+                <button onclick="closeEditTarifModal()"
+                    class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+            </div>
+        </div>
+
 
     </main>
+
+    <script>
+        function openEditTarifModal(id, daya, tarifperkwh) {
+            document.getElementById('modalEditTarif').classList.remove('hidden');
+            document.getElementById('modalEditTarif').classList.add('flex');
+
+            document.getElementById('edit_daya').value = daya;
+            document.getElementById('edit_tarifperkwh').value = tarifperkwh;
+
+            const form = document.getElementById('formEditTarif');
+            form.action = `/tarif/update/${id}`; // route update
+        }
+
+        function closeEditTarifModal() {
+            document.getElementById('modalEditTarif').classList.add('hidden');
+            document.getElementById('modalEditTarif').classList.remove('flex');
+        }
+    </script>
 
     <script>
         function openModal() {

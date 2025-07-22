@@ -11,7 +11,7 @@
 <body class="flex min-h-screen bg-gray-100">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-md h-screen px-4 py-6 m-0">
+    <aside class="w-64 bg-white shadow-md h-screen px-4 py-6">
         <h1 class="text-2xl font-bold mb-6 text-blue-600">Dashboard</h1>
         <nav class="space-y-2">
             <a href="/layout-dashboard"
@@ -47,68 +47,77 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                            
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex"><p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
 
 
     <!-- Main Content -->
-    <main class="flex-1 p-8  ">
-        <h2 class="text-3xl font-bold mb-4">Welcome to the Dashboard</h2>
-        <p class="text-gray-600">Here is your main content area.</p>
-        <div class="relative w-full h-screen ">
-            <div class="px-4 py-6 flex justify-center">
-                <div class="flex flex-wrap gap-4 ">
-                    <div
-                        class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
-                        <div class="justify-center ml-[90px] mt-8">
-                            <img src="img/user.png" alt="user" class="w-20 h-20">
-                            <h3 class="font-bold text-xl text-slate-700 -ml-[68px] mt-3">Total Pengguna</h3>
-                            <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalPelanggan }}</h1>
+    <main class="flex-1 p-8">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Dashboard</h2>
+        <p class="text-gray-600 mb-8">Data statistik aplikasi</p>
 
-                        </div>
-                    </div>
-                    <div
-                        class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
-                        <div class="justify-center ml-[90px] mt-8">
-                            <img src="img/bill.png" alt="user" class="w-20 h-20">
-                            <h3 class="font-bold text-xl text-slate-700 -ml-[60px] mt-3">Total Tagihan</h3>
-                            <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalTagihan }}</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Card: Total Pengguna -->
+            <div
+                class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-xl transition hover:scale-105 p-6 flex flex-col items-center">
+                <img src="img/user.png" alt="user" class="w-16 h-16 mb-4">
+                <h3 class="text-lg font-semibold text-gray-700">Total Pengguna</h3>
+                <p class="text-4xl font-bold text-emerald-500 mt-2">{{ $totalPelanggan }}</p>
+            </div>
 
-                        </div>
-                    </div>
-                    <div
-                        class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
-                        <div class="justify-center ml-[90px] mt-8">
-                            <img src="img/billl.png" alt="user" class="w-20 h-20">
-                            <h3 class="font-bold text-xl text-slate-700 -ml-24 pl-2 mt-3">Total Pembayaran Berhasil</h3>
-                            <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalPembayaran }}</h1>
+            <!-- Card: Total Tagihan -->
+            <div
+                class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-xl transition hover:scale-105 p-6 flex flex-col items-center">
+                <img src="img/bill.png" alt="tagihan" class="w-16 h-16 mb-4">
+                <h3 class="text-lg font-semibold text-gray-700">Total Tagihan</h3>
+                <p class="text-4xl font-bold text-emerald-500 mt-2">{{ $totalTagihan }}</p>
+            </div>
 
-                        </div>
-                    </div>
-                    <div
-                        class="w-64 h-72 rounded-2xl  mr-4 bg-white border-2 border-slate-700 shadow-2xl hover:scale-110 transition ease-in duration-300">
-                        <div class="justify-center ml-[90px] mt-8">
-                            <img src="img/admin.png" alt="user" class="w-20 h-20">
-                            <h3 class="font-bold text-xl text-slate-700 -ml-4 mt-3">Total Admin</h3>
-                            <h1 class="font-bold text-7xl text-emerald-500 ">{{ $totalUser }}</h1>
+            <!-- Card: Pembayaran Berhasil -->
+            <div
+                class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-xl transition hover:scale-105 p-6 flex flex-col items-center">
+                <img src="img/billl.png" alt="pembayaran" class="w-16 h-16 mb-4">
+                <h3 class="text-lg font-semibold text-center text-gray-700">Pembayaran Berhasil</h3>
+                <p class="text-4xl font-bold text-emerald-500 mt-2">{{ $totalPembayaran }}</p>
+            </div>
 
-                        </div>
-                    </div>
-
-
-                </div>
+            <!-- Card: Total Admin -->
+            <div
+                class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-xl transition hover:scale-105 p-6 flex flex-col items-center">
+                <img src="img/admin.png" alt="admin" class="w-16 h-16 mb-4">
+                <h3 class="text-lg font-semibold text-gray-700">Total Admin</h3>
+                <p class="text-4xl font-bold text-emerald-500 mt-2">{{ $totalUser }}</p>
             </div>
         </div>
-
     </main>
+
+    
 
 </body>
 

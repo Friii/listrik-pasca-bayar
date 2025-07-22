@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Tagihan;
 use App\Models\Pelanggan;
 use App\Models\Pembayaran;
+use App\Models\User;
 use Illuminate\Http\Request;
-use function Laravel\Prompts\alert;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
+use function Laravel\Prompts\alert;
+use App\Models\Tagihan;
 
 class UserController extends Controller
 {

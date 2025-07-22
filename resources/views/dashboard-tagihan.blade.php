@@ -47,13 +47,31 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                            
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex"><p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
@@ -64,8 +82,12 @@
         <div>
             <h2 class="text-3xl font-bold mb-8">Data Tagihan</h2>
             <button onclick="openModal()"
-                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition">
-                + Tambah Tagihan
+                class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Tagihan
             </button>
 
             <form action="">
@@ -81,58 +103,68 @@
             </form>
 
             <div class="w-full bg-white shadow-xl mt-6 rounded-xl overflow-x-auto">
-    <div class="p-6">
-        <table class="min-w-full text-left text-sm text-gray-800">
-            <thead>
-                <tr class="bg-sky-800 text-white uppercase text-xs tracking-wider">
-                    <th class="px-4 py-3">No</th>
-                    <th class="px-4 py-3">ID Tagihan</th>
-                    <th class="px-4 py-3">ID Penggunaan</th>
-                    <th class="px-4 py-3">Nama Pelanggan</th>
-                    <th class="px-4 py-3">Bulan</th>
-                    <th class="px-4 py-3">Tahun</th>
-                    <th class="px-4 py-3">Jumlah Meter</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @php $no = 1; @endphp
-                @foreach ($data as $tagihan)
-                    <tr class="hover:bg-gray-100 transition duration-150">
-                        <td class="px-4 py-3">{{ $no++ }}</td>
-                        <td class="px-4 py-3">{{ $tagihan->id_tagihan }}</td>
-                        <td class="px-4 py-3">{{ $tagihan->id_penggunaan }}</td>
-                        <td class="px-4 py-3">{{ $tagihan->pelanggan->nama_pelanggan }}</td>
-                        <td class="px-4 py-3">{{ $tagihan->bulan }}</td>
-                        <td class="px-4 py-3">{{ $tagihan->tahun }}</td>
-                        <td class="px-4 py-3">
-                            {{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                <div class="p-6">
+                    <table class="min-w-full text-left text-sm text-gray-800">
+                        <thead>
+                            <tr class="bg-sky-800 text-white uppercase text-xs tracking-wider">
+                                <th class="px-4 py-3">No</th>
+                                <th class="px-4 py-3">ID Tagihan</th>
+                                <th class="px-4 py-3">ID Penggunaan</th>
+                                <th class="px-4 py-3">Nama Pelanggan</th>
+                                <th class="px-4 py-3">Bulan</th>
+                                <th class="px-4 py-3">Tahun</th>
+                                <th class="px-4 py-3">Jumlah Meter</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @php $no = 1; @endphp
+                            @foreach ($data as $tagihan)
+                                <tr class="hover:bg-gray-100 transition duration-150">
+                                    <td class="px-4 py-3">{{ $no++ }}</td>
+                                    <td class="px-4 py-3">{{ $tagihan->id_tagihan }}</td>
+                                    <td class="px-4 py-3">{{ $tagihan->id_penggunaan }}</td>
+                                    <td class="px-4 py-3">{{ $tagihan->pelanggan->nama_pelanggan }}</td>
+                                    <td class="px-4 py-3">{{ $tagihan->bulan }}</td>
+                                    <td class="px-4 py-3">{{ $tagihan->tahun }}</td>
+                                    <td class="px-4 py-3">
+                                        {{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="px-2 py-1 rounded-full text-xs font-semibold 
                                 {{ $tagihan->status == 'Belum Bayar' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
-                                {{ $tagihan->status }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-center flex justify-center space-x-2">
-                            <button onclick="openModal()"
-                                class="p-2 bg-yellow-500 hover:bg-yellow-600 rounded-full text-white transition duration-150"
-                                title="Edit">
-                                ✎
-                            </button>
-                            <button onclick="deleteData()"
-                                class="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition duration-150"
-                                title="Hapus">
-                                🗑
-                            </button>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+                                            {{ $tagihan->status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center flex justify-center space-x-2">
+                                        <button
+                                            onclick="openEditModal({{ $tagihan->id_tagihan }}, '{{ $tagihan->bulan }}', '{{ $tagihan->tahun }}', '{{ $tagihan->jumlah_meter }}')"
+                                            class="p-2 bg-yellow-500 hover:bg-yellow-600 rounded-full text-white transition duration-150"
+                                            title="Edit">
+                                            ✎
+                                        </button>
+
+                                        <!-- Delete -->
+                                        <form action="{{ route('tagihan.destroy', $tagihan->id_tagihan) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus tagihan ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition duration-150"
+                                                title="Hapus">
+                                                🗑
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!-- Modal Tambah Pelanggan -->
             <div id="modalTagihan" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -211,7 +243,77 @@
                 </div>
             </div>
 
+            <!-- Modal Edit Tagihan -->
+<div id="modalEditTagihan" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+        <h2 class="text-2xl font-bold mb-4">Edit Tagihan</h2>
+
+        <form id="formEditTagihan" method="POST">
+            @csrf
+            @method('POST')
+            <div>
+                <label class="block font-semibold">Bulan</label>
+                <select name="bulan" id="editBulan"
+                    class="w-full bg-gray-300 rounded-full px-2 py-2 focus:outline-none focus:ring-2 focus:ring-sky-800"
+                    required>
+                    <option value="Januari">Januari</option>
+                    <option value="Februari">Februari</option>
+                    <option value="Maret">Maret</option>
+                    <option value="April">April</option>
+                    <option value="Mei">Mei</option>
+                    <option value="Juni">Juni</option>
+                    <option value="Juli">Juli</option>
+                    <option value="Agustus">Agustus</option>
+                    <option value="September">September</option>
+                    <option value="Oktober">Oktober</option>
+                    <option value="November">November</option>
+                    <option value="Desember">Desember</option>
+                </select>
+            </div>
+            <div>
+                <label class="block font-semibold">Tahun</label>
+                <input type="text" name="tahun" id="editTahun"
+                    class="w-full p-2 border rounded" required>
+            </div>
+            <div>
+                <label class="block font-semibold">Jumlah Meter</label>
+                <input type="text" name="jumlah_meter" id="editJumlahMeter"
+                    class="w-full p-2 border rounded" required>
+            </div>
+            <div class="flex justify-end space-x-2 mt-4">
+                <button type="button" onclick="closeEditModal()"
+                    class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+            </div>
+        </form>
+
+        <button onclick="closeEditModal()"
+            class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+    </div>
+</div>
+
+
     </main>
+
+    <script>
+    function openEditModal(id, bulan, tahun, jumlah_meter) {
+        document.getElementById('modalEditTagihan').classList.remove('hidden');
+        document.getElementById('modalEditTagihan').classList.add('flex');
+
+        document.getElementById('editBulan').value = bulan;
+        document.getElementById('editTahun').value = tahun;
+        document.getElementById('editJumlahMeter').value = jumlah_meter;
+
+        document.getElementById('formEditTagihan').action = `/tagihan/update/${id}`;
+    }
+
+    function closeEditModal() {
+        document.getElementById('modalEditTagihan').classList.add('hidden');
+        document.getElementById('modalEditTagihan').classList.remove('flex');
+    }
+</script>
+
 
     <script>
         function openModal() {

@@ -47,13 +47,31 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                            
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex"><p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
@@ -63,8 +81,12 @@
         <div>
             <h2 class="text-3xl font-bold mb-8">Data Penggunaan</h2>
             <button onclick="openModal()"
-                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition">Tambah
-                Penggunaan</button>
+                class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Penggunaan</button>
             <form action="{{ route('penggunaancheck.pelanggan') }}" method="post">
                 <div class="flex items-center justify-end -mt-8">
                     <input type="text" placeholder="Cari Nama Pelanggan"
@@ -104,10 +126,23 @@
                                     <td class="px-4 py-2">{{ $penggunaan->meter_awal }}</td>
                                     <td class="px-4 py-2">{{ $penggunaan->meter_ahir }}</td>
                                     <td class="px-4 py-2 text-center">
-                                        <a href="#"
-                                            class="inline-block px-3 py-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition text-xs font-semibold">
-                                            🗑 Hapus
-                                        </a>
+                                        <!-- Edit -->
+                                        <button
+                                            onclick="openEditModal({{ $penggunaan->id_penggunaan }}, '{{ $penggunaan->bulan }}', '{{ $penggunaan->tahun }}', {{ $penggunaan->meter_awal }}, {{ $penggunaan->meter_ahir }})"
+                                            class="inline-block px-3 py-1 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 text-xs font-semibold">✎
+                                            Edit</button>
+
+                                        <!-- Delete -->
+                                        <form action="{{ route('penggunaan.destroy', $penggunaan->id_penggunaan) }}"
+                                            method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')"
+                                            class="inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-block px-3 py-1 bg-red-600 text-white rounded-full hover:bg-red-700 text-xs font-semibold">🗑
+                                                Hapus</button>
+                                        </form>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -121,7 +156,7 @@
             <div id="modalPenggunaan"
                 class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
-                    <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
+                    <h2 class="text-2xl font-bold mb-4">Tambah Penggunaan</h2>
 
                     <form action="{{ route('penggunaancheck.pelanggan') }}" method="POST" class="space-y-4">
                         @csrf
@@ -187,7 +222,80 @@
                 </div>
             </div>
 
+            {{-- Modal Edit Pelanggan --}}
+            <!-- Modal Edit Penggunaan -->
+            <div id="modalEditPenggunaan"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+                    <h2 class="text-2xl font-bold mb-4">Edit Penggunaan</h2>
+                    <form id="formEditPenggunaan" method="POST">
+                        @csrf
+                        @method('POST')
+                        <div>
+                            <label class="block font-semibold">Bulan</label>
+                            <select name="bulan" id="editBulan" class="w-full bg-gray-200 p-2 rounded" required>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold">Tahun</label>
+                            <input type="text" name="tahun" id="editTahun" class="w-full p-2 border rounded"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block font-semibold">Meter Awal</label>
+                            <input type="text" name="meter_awal" id="editMeterAwal"
+                                class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block font-semibold">Meter Akhir</label>
+                            <input type="text" name="meter_ahir" id="editMeterAkhir"
+                                class="w-full p-2 border rounded" required>
+                        </div>
+                        <div class="flex justify-end mt-4 space-x-2">
+                            <button type="button" onclick="closeEditModal()"
+                                class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                            <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+                        </div>
+                    </form>
+                    <button onclick="closeEditModal()"
+                        class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+                </div>
+            </div>
+
+
     </main>
+    <script>
+        function openEditModal(id, bulan, tahun, meterAwal, meterAkhir) {
+            document.getElementById('modalEditPenggunaan').classList.remove('hidden');
+            document.getElementById('modalEditPenggunaan').classList.add('flex');
+
+            document.getElementById('editBulan').value = bulan;
+            document.getElementById('editTahun').value = tahun;
+            document.getElementById('editMeterAwal').value = meterAwal;
+            document.getElementById('editMeterAkhir').value = meterAkhir;
+
+            document.getElementById('formEditPenggunaan').action = `/penggunaan/update/${id}`;
+        }
+
+        function closeEditModal() {
+            document.getElementById('modalEditPenggunaan').classList.add('hidden');
+            document.getElementById('modalEditPenggunaan').classList.remove('flex');
+        }
+    </script>
+
 
     <script>
         function openModal() {

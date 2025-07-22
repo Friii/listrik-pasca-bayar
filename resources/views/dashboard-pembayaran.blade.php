@@ -11,7 +11,7 @@
 <body class="flex min-h-screen bg-gray-100">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-md max-h-full px-4 py-6">
+    <aside class="w-64 bg-white shadow-md h-screen px-4 py-6">
         <h1 class="text-2xl font-bold mb-6 text-blue-600">Dashboard</h1>
         <nav class="space-y-2">
             <a href="/layout-dashboard"
@@ -47,13 +47,31 @@
                 <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
                 Data Pembayaran
             </a>
-            <div class="relative top-[23rem] flex gap-2 justify-start">
-                <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
-                        class="w-12 h-12 rounded-full bg-cover">
-                    <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
-                </a>
+            <div class="relative flex gap-2 justify-start ">
+                <div class="relative mt-80">
+                    <button onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <img src="img/us.png" alt="profil" class="w-12 h-12 rounded-full bg-cover">
+                        <p class="text-2xl font-semibold text-blue-600 py-2 px-4">
+                            {{ Auth::user()->nama_admin }}
+                        </p>
+                    </button>
 
+                    <!-- Dropdown -->
+                    <div id="dropdownMenu"
+                        class="absolute left-0 mt-2 w-40  bg-white border rounded-xl shadow-lg opacity-0 scale-95 transition-all duration-200 origin-top-left transform pointer-events-none z-50">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex text-left px-4 py-2 text-red-600 hover:bg-red-100  hover:text-red-700">
+                                <img src="img/keluar.png" alt="Keluar" width="20px" height="20px" class="flex">
+                                <p class="flex pl-2">Logout</p>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
         </nav>
     </aside>
 
@@ -64,8 +82,12 @@
         <div>
             <h2 class="text-3xl font-bold mb-8">Data Pembayaran</h2>
             <button onclick="openModal()"
-                class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition">
-                + Tambah Pembayaran Pelanggan
+                class="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg backdrop-blur-sm hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Pembayaran
             </button>
 
             <form action="">
@@ -104,23 +126,36 @@
                                     <td class="px-4 py-3">{{ $pembayaran->id_pelanggan }}</td>
                                     <td class="px-4 py-3">{{ $pembayaran->pelanggan->nama_pelanggan }}</td>
                                     <td class="px-4 py-3">{{ $pembayaran->tanggal_pembayaran }}</td>
+                                    <td class="px-4 py-3">{{ $pembayaran->pelanggan->nomor_kwh }}</td>
                                     <td class="px-4 py-3">{{ $pembayaran->tagihan->bulan }}</td>
-                                    <td class="px-4 py-3"><img src="{{ asset('storage/' . $pembayaran->bukti) }}" alt="Bukti Pembayaran" width="100"></td>
                                     <td class="px-4 py-3">
                                         {{ $pembayaran->total_bayar }}
                                     </td>
+                                    <td class="px-4 py-3"><img src="{{ asset('storage/' . $pembayaran->bukti) }}"
+                                            alt="Bukti Pembayaran" width="100"></td>
 
                                     <td class="px-4 py-3 text-center flex justify-center space-x-2">
-                                        <button onclick="openModal()"
+                                        <!-- Edit -->
+                                        <!-- Edit -->
+                                        <button
+                                            onclick="openEditModal({{ $pembayaran->id_pembayaran }}, '{{ $pembayaran->tanggal_pembayaran }}')"
                                             class="p-2 bg-yellow-500 hover:bg-yellow-600 rounded-full text-white transition duration-150"
                                             title="Edit">
                                             ✎
                                         </button>
-                                        <button onclick="deleteData()"
-                                            class="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition duration-150"
-                                            title="Hapus">
-                                            🗑
-                                        </button>
+
+
+                                        <form action="{{ route('pembayaran.destroy', $pembayaran->id_pembayaran) }}"
+                                            method="POST" onsubmit="return confirm('Yakin hapus?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition duration-150"
+                                                title="Hapus">
+                                                🗑
+                                            </button>
+                                        </form>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -130,11 +165,13 @@
             </div>
 
             <!-- Modal Tambah Pelanggan -->
-            <div id="modalTagihan" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div id="modalTagihan"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
                     <h2 class="text-2xl font-bold mb-4">Tambah Pelanggan</h2>
 
-                    <form action="{{ route('pembayarancheck.pelanggan') }}" method="POST" class="space-y-4" enctype="multipart/form-data">
+                    <form action="{{ route('pembayarancheck.pelanggan') }}" method="POST" class="space-y-4"
+                        enctype="multipart/form-data">
                         @csrf
                         <div>
                             <select name="id_tagihan" id="id_tagihan"
@@ -187,7 +224,55 @@
                 </div>
             </div>
 
+            {{-- Modal Edit --}}
+            <!-- Modal Edit -->
+            <div id="modalEdit" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">
+                    <h2 class="text-2xl font-bold mb-4">Edit Pembayaran</h2>
+                    <form id="formEdit" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('POST')
+                        <div>
+                            <label class="block font-semibold">Tanggal Pembayaran</label>
+                            <input type="date" name="tanggal_pembayaran" id="editTanggal" required
+                                class="w-full p-2 border rounded bg-gray-100">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold">Upload Bukti (Opsional)</label>
+                            <input type="file" name="bukti" accept="image/*"
+                                class="w-full p-2 border rounded bg-gray-100">
+                        </div>
+
+                        <div class="flex justify-end space-x-2 mt-4">
+                            <button type="button" onclick="closeEditModal()"
+                                class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+                            <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update</button>
+                        </div>
+                    </form>
+                    <button onclick="closeEditModal()"
+                        class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+                </div>
+            </div>
+
+
     </main>
+
+    <script>
+        function openEditModal(id, tanggal) {
+            document.getElementById('modalEdit').classList.remove('hidden');
+            document.getElementById('modalEdit').classList.add('flex');
+            document.getElementById('editTanggal').value = tanggal;
+            document.getElementById('formEdit').action = `/pembayaran/update/${id}`;
+        }
+
+        function closeEditModal() {
+            document.getElementById('modalEdit').classList.add('hidden');
+            document.getElementById('modalEdit').classList.remove('flex');
+        }
+    </script>
+
 
     <script>
         function openModal() {
@@ -205,6 +290,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const selectTagihan = document.getElementById('id_tagihan');
             const totalBayarInput = document.getElementById('total_bayar');
+            const biayaAdmin = 2500;
 
             selectTagihan.addEventListener('change', function() {
                 const idTagihan = this.value;
@@ -214,7 +300,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.total_bayar !== undefined) {
-                                totalBayarInput.value = data.total_bayar;
+                                const totalDenganAdmin = parseInt(data.total_bayar) + biayaAdmin;
+                                totalBayarInput.value = totalDenganAdmin;
                             } else {
                                 totalBayarInput.value = '0';
                             }
@@ -229,6 +316,7 @@
             });
         });
     </script>
+
 
 
 

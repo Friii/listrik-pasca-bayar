@@ -18,7 +18,6 @@
     <div class="px-2 max-w-md w-full shadow-2xl py-10 rounded-xl backdrop-blur-xl border-slate-700 ">
         <div class="flex flex-wrap gap-2 justify-center mb-7">
             <a href="/registration-admin" class="w-32 h-20 bg-sky-300 rounded-2xl border shadow-xl justify-items-center items-center pt-2 hover:bg-sky-100 transition ease-in duration-300 hover:border-sky-300"><img src="img/admin.png" alt="User" class="w-10 h-10"><p class="text-sm font-semibold">Admin</p></a>
-            <a href="/registration" class="w-32 h-20 bg-sky-300 rounded-2xl border shadow-xl justify-items-center items-center pt-2 hover:bg-sky-100 transition ease-in duration-300 hover:border-sky-300"><img src="img/profile.png" alt="User" class="w-10 h-10"><p class="text-sm font-semibold">Pelanggan</p></a>
         </div>
         <x-login></x-login>
     </div>

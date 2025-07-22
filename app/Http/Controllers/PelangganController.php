@@ -12,28 +12,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use PDO;
+use Illuminate\Support\Facades\Auth;
 
 class PelangganController extends Controller
 {
-    // Tampilkan semua data tarif ke view
-    public function index()
-    {
-        $data = \App\Models\Pelanggan::all(); // Ambil data dari DB
-        return view('dashboard-pelanggan', compact('data')); // Kirim ke view
-    }
-
     public function pelanggan()
     {
         $data = \App\Models\Pelanggan::with('tarif')->get(); // Ambil data dari DB
         return view('dashboard-pelanggan', compact('data')); // Kirim ke view
     }
 
-    public function penggunaan()
+    public function loginPelanggan()
     {
-        $penggunaan = Penggunaan::with('pelanggan')->get();
-        $pelanggan = Pelanggan::with('pelanggan')->get(); // relasi eager loading
-        return view('dashboard-penggunaan', compact('penggunaan', 'pelanggan'));
+        return view('login-pelanggan');
     }
+
+
 
     public function pelanggancheck(Request $request)
     {
@@ -96,179 +90,156 @@ class PelangganController extends Controller
         ]);
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
-            'daya' => 'required',
-            'tarifperkwh' => 'required|numeric'
-        ]);
-
-        Tarif::create([
-            'daya' => $request->daya,
-            'tarifperkwh' => $request->tarifperkwh
-        ]);
-
-        return redirect()->back()->with('success', 'Data tarif berhasil ditambahkan');
-    }
-
-    public function penggunaancheck(Request $request)
-    {
-        $request->validate([
-            'id_pelanggan' => 'required',
-            'bulan' => 'required',
-            'tahun' => 'required',
-            'meter_awal' => 'required',
-            'meter_ahir' => 'required',
+            'username' => 'required|unique:pelanggans',
+            'password' => 'required|min:6',
+            'nama_pelanggan' => 'required',
+            'nomor_kwh' => 'required|unique:pelanggans',
+            'alamat' => 'required',
+            'id_tarif' => 'required',
         ]);
 
         do {
-            $id = random_int(5000000, 6000000);
-        } while (Penggunaan::where('id_penggunaan', $id)->exists());
+            $id = random_int(100000, 999999);
+        } while (\App\Models\Pelanggan::where('id_pelanggan', $id)->exists());
 
-        Penggunaan::create([
-            'id_penggunaan' => $id,
-            'id_pelanggan' => $request->id_pelanggan,
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-            'meter_awal' => $request->meter_awal,
-            'meter_ahir' => $request->meter_ahir,
+        \App\Models\Pelanggan::create([
+            'id_pelanggan' => $id,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'nomor_kwh' => $request->nomor_kwh,
+            'alamat' => $request->alamat,
+            'id_tarif' => $request->id_tarif,
+            'id_level' => 2,
         ]);
 
-        return redirect()->back()->with('Berhasil');
+        return redirect()->back()->with('success', 'Pelanggan berhasil ditambahkan');
+    }
+    public function edit($id)
+    {
+        $pelanggan = \App\Models\Pelanggan::findOrFail($id);
+        return view('edit-pelanggan', compact('pelanggan'));
     }
 
-    public function tagihan()
+    public function update(Request $request, $id)
     {
-        $data = Tagihan::with(['penggunaan', 'pelanggan'])->get();
-        $penggunaan = Penggunaan::with('pelanggan')->get();
+        $request->validate([
+            'nama_pelanggan' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'id_tarif' => 'required|exists:tarifs,id_tarif',
+        ]);
 
-        return view('dashboard-tagihan', compact('data', 'penggunaan'));
+        $pelanggan = Pelanggan::findOrFail($id);
+
+        $pelanggan->update([
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'alamat' => $request->alamat,
+            'id_tarif' => $request->id_tarif,
+        ]);
+
+        return redirect()->route('tambah.pelanggan')->with('success', 'Pelanggan berhasil diperbarui.');
     }
 
-    public function getJumlahMeter($id_pelanggan, Request $request)
-    {
-        $bulan = $request->query('bulan');
-        $tahun = $request->query('tahun');
 
-        $penggunaan = Penggunaan::where('id_pelanggan', $id_pelanggan)
-            ->where('bulan', $bulan)
-            ->where('tahun', $tahun)
+
+    public function destroy($id)
+    {
+        $pelanggan = Pelanggan::findOrFail($id);
+        $pelanggan->delete();
+
+        return redirect()->back()->with('success', 'Data pelanggan berhasil dihapus.');
+    }
+
+    public function index(Request $request)
+    {
+        // Memulai query ke model Pelanggan dengan eager loading relasi 'tarif'
+        $query = Pelanggan::with('tarif');
+
+        // Mengecek apakah ada input 'search' dari form
+        if ($request->has('search') && $request->search != '') {
+            // Jika ada, tambahkan kondisi WHERE LIKE untuk mencari nama pelanggan
+            $query->where('nama_pelanggan', 'like', '%' . $request->search . '%');
+        }
+
+        // Ambil data hasil query
+        $data = $query->paginate(10); // Menggunakan paginate untuk data yang banyak lebih baik
+
+        // Kirim data ke view
+        return view('dashboard-pelanggan', compact('data'));
+    }
+
+    public function landing()
+    {
+        // Ambil id pelanggan dari session
+        $id = session('pelanggan_id');
+
+        // Ambil data pelanggan dari database
+        $pelanggan = \App\Models\Pelanggan::find($id);
+
+        // Kirim ke view
+        return view('landing-page', compact('pelanggan'));
+    }
+
+
+    public function landingcheck(Request $request)
+    {
+        $credentials = $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]); // hasil true / false
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if ($user->id_level == 2) {
+                return redirect()->route('kelolaLandingPage');
+            }
+        }
+
+        $pelanggan = \App\Models\Pelanggan::where('username', $credentials['username'])->first();
+        if ($pelanggan && Hash::check($credentials['password'], $pelanggan->password)) {
+            // Login manual pelanggan
+            session(['pelanggan_id' => $pelanggan->id_pelanggan]);
+            return redirect()->route('kelolaLandingPage');
+        }
+
+        return back()->withErrors(['loginPelanggan' => 'Username atau password salah']);
+    }
+
+    public function kelolaLandingPage(Request $request)
+{
+    // Ambil pelanggan dari session, bukan dari Auth
+    $pelangganLogin = Pelanggan::find(session('pelanggan_id'));
+
+    if (!$pelangganLogin) {
+        return redirect()->route('loginPelanggan')->with('error', 'Data pelanggan tidak ditemukan.');
+    }
+
+    if ($request->isMethod('post')) {
+        $request->validate(['id_tagihan' => 'required']);
+
+        $tagihan = Tagihan::with('penggunaan.pelanggan.tarif')
+            ->where('id_tagihan', $request->id_tagihan)
             ->first();
 
-        if (!$penggunaan) {
-            return response()->json(['jumlah_meter' => null]);
-        }
-
-        $jumlah_meter = $penggunaan->meter_ahir - $penggunaan->meter_awal;
-
-        return response()->json(['jumlah_meter' => $jumlah_meter]);
-    }
-
-    public function tagihancheck(Request $request)
-    {
-
-        $request->validate([
-            'id_penggunaan' => 'required',
-            'bulan' => 'required',
-            'id_pelanggan' => 'required',
-            'tahun' => 'required',
-            'jumlah_meter' => 'required',
-
-        ]);
-
-        do {
-            $id = random_int(1000000, 9999999);
-        } while (Tagihan::where('id_tagihan', $id)->exists());
-
-        Tagihan::create([
-            'id_tagihan' => $id,
-            'id_penggunaan' => $request->id_penggunaan,
-            'id_pelanggan' => $request->id_pelanggan,
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-            'jumlah_meter' => $request->jumlah_meter,
-            'status' => 'Belum Bayar'
-        ]);
-        return redirect()->back()->with('success', 'Tagihan berhasil ditambahkan');
-    }
-
-
-    public function pembayaran()
-    {
-        $data = Pembayaran::with(['tagihan.penggunaan', 'pelanggan.tarif'])->get();
-        $pelanggan = Pelanggan::with('tarif')->get(); // Jika mau dipakai di select form
-        $tagihan = Tagihan::with('penggunaan')->get(); // Jika mau ditampilkan nama bulan/tahun
-
-        // dd($request->all());
-        return view('dashboard-pembayaran', compact('data', 'pelanggan', 'tagihan'));
-    }
-
-    public function pembayarancheck(Request $request)
-    {
-        $request->validate([
-            'id_tagihan' => 'required|exists:tagihans,id_tagihan',
-            'id_user' => 'required|exists:user,id_user',
-            'tanggal_pembayaran' => 'required|date',
-            'bukti' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        // Ambil data tagihan dan relasi penggunaan
-        $tagihan = Tagihan::with('penggunaan')->findOrFail($request->id_tagihan);
-
-        // Ambil id_pelanggan dari relasi penggunaan
-        $id_pelanggan = $tagihan->penggunaan->id_pelanggan;
-
-        // Ambil data pelanggan beserta tarifnya
-        $pelanggan = Pelanggan::with('tarif')->findOrFail($id_pelanggan);
-
-        // Hitung total bayar
-        $jumlah_meter = $tagihan->jumlah_meter;
-        $tarif_perkwh = $pelanggan->tarif->tarifperkwh;
-        $biaya_admin = 2500;
-        $total_bayar = ($jumlah_meter * $tarif_perkwh) + $biaya_admin;
-
-        // Upload bukti pembayaran ke storage/app/public/bukti_pembayaran
-        $buktiPath = $request->file('bukti')->store('bukti_pembayaran', 'public');
-
-        // Generate ID pembayaran unik
-        do {
-            $id = random_int(8000000, 9999999);
-        } while (Pembayaran::where('id_pembayaran', $id)->exists());
-
-        // Simpan data ke database
-        Pembayaran::create([
-            'id_pembayaran' => $id,
-            'id_pelanggan' => $id_pelanggan,
-            'id_tagihan' => $request->id_tagihan,
-            'id_user' => $request->id_user,
-            'tanggal_pembayaran' => $request->tanggal_pembayaran,
-            'biaya_admin' => $biaya_admin,
-            'total_bayar' => $total_bayar,
-            'bukti' => $buktiPath,
-        ]);
-
-        return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
-    }
-
-
-    // app/Http/Controllers/PelangganController.php
-
-    // ... (method Anda yang lain)
-
-    public function getTotalBayar($id_tagihan)
-    {
-        $tagihan = Tagihan::with('penggunaan', 'pelanggan.tarif')->find($id_tagihan);
-
         if (!$tagihan) {
-            return response()->json(['error' => 'Tagihan tidak ditemukan'], 404);
+            return back()->withErrors(['id_tagihan' => 'Tagihan tidak ditemukan.']);
         }
 
-        $jumlah_meter = $tagihan->jumlah_meter;
-        $tarif_per_kwh = $tagihan->pelanggan->tarif->tarifperkwh ?? 0;
+        if ($tagihan->penggunaan->pelanggan->id_pelanggan != $pelangganLogin->id_pelanggan) {
+            return back()->withErrors(['id_tagihan' => 'Anda tidak memiliki akses ke tagihan ini.']);
+        }
 
-        $total = $jumlah_meter * $tarif_per_kwh;
-
-        return response()->json(['total_bayar' => $total]);
+        return view('landing-page', [
+            'pelanggan' => $pelangganLogin,
+            'tagihan' => $tagihan
+        ]);
     }
+
+    return view('landing-page', ['pelanggan' => $pelangganLogin]);
+}
+
 }

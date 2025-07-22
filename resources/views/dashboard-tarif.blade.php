@@ -42,7 +42,12 @@
                 <img src="img/tagihan.png" alt="user" class="w-5 h-5 mr-2">
                 Data Tagihan
             </a>
-            <div class="relative top-[28rem] flex gap-2 justify-start">
+            <a href="/dashboard-pembayaran"
+                class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
+                <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
+                Data Pembayaran
+            </a>
+            <div class="relative top-[23rem] flex gap-2 justify-start">
                 <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
                         class="w-12 h-12 rounded-full bg-cover">
                     <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>

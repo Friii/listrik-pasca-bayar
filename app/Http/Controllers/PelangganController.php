@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Pelanggan;
+use App\Models\Pembayaran;
 use App\Models\Penggunaan;
 use App\Models\Tagihan;
 use App\Models\Tarif;
@@ -23,14 +24,15 @@ class PelangganController extends Controller
 
     public function pelanggan()
     {
-        $data = \App\Models\Pelanggan::all(); // Ambil data dari DB
-        return view('dashboard-pelanggan', compact('data')); // Kirim ke view  
+        $data = \App\Models\Pelanggan::with('tarif')->get(); // Ambil data dari DB
+        return view('dashboard-pelanggan', compact('data')); // Kirim ke view
     }
 
     public function penggunaan()
     {
-        $penggunaan = Penggunaan::with('pelanggan')->get(); // relasi eager loading
-        return view('dashboard-penggunaan', compact('penggunaan'));
+        $penggunaan = Penggunaan::with('pelanggan')->get();
+        $pelanggan = Pelanggan::with('pelanggan')->get(); // relasi eager loading
+        return view('dashboard-penggunaan', compact('penggunaan', 'pelanggan'));
     }
 
     public function pelanggancheck(Request $request)
@@ -46,10 +48,10 @@ class PelangganController extends Controller
 
         do {
             $id = random_int(10000, 99999);
-        } while (Pelanggan::where('id_pelanggan', $id)->exists());
+        } while (Penggunaan::where('id_pelanggan', $id)->exists());
 
         Pelanggan::create([
-            'id_pelanggan'=> $id,
+            'id_pelanggan' => $id,
             'username' => $request->username,
             'password' => Hash::make($request->password), // ← WAJIB: enkripsi
             'nama_pelanggan' => $request->nama_pelanggan,
@@ -90,12 +92,11 @@ class PelangganController extends Controller
             'nomor_kwh' => $request->nomor_kwh,
             'alamat' => $request->alamat,
             'id_tarif' => $request->id_tarif,
-            'id_level' => 2, // atau $request->id_level
+            'id_level' => 2,
         ]);
     }
 
 
-    // Simpan data tarif baru
     public function store(Request $request)
     {
         $request->validate([
@@ -111,7 +112,8 @@ class PelangganController extends Controller
         return redirect()->back()->with('success', 'Data tarif berhasil ditambahkan');
     }
 
-    public function penggunaancheck(Request $request){
+    public function penggunaancheck(Request $request)
+    {
         $request->validate([
             'id_pelanggan' => 'required',
             'bulan' => 'required',
@@ -121,10 +123,9 @@ class PelangganController extends Controller
         ]);
 
         do {
-            $id = random_int(1000000, 9999999);
-        } while (Pelanggan::where('id_penggunaan', $id)->exists());
+            $id = random_int(5000000, 6000000);
+        } while (Penggunaan::where('id_penggunaan', $id)->exists());
 
-        // SIMPAN ke tabel tagihans
         Penggunaan::create([
             'id_penggunaan' => $id,
             'id_pelanggan' => $request->id_pelanggan,
@@ -133,6 +134,8 @@ class PelangganController extends Controller
             'meter_awal' => $request->meter_awal,
             'meter_ahir' => $request->meter_ahir,
         ]);
+
+        return redirect()->back()->with('Berhasil');
     }
 
     public function tagihan()
@@ -148,7 +151,6 @@ class PelangganController extends Controller
         $bulan = $request->query('bulan');
         $tahun = $request->query('tahun');
 
-        // Cari penggunaan berdasarkan id_pelanggan, bulan dan tahun
         $penggunaan = Penggunaan::where('id_pelanggan', $id_pelanggan)
             ->where('bulan', $bulan)
             ->where('tahun', $tahun)
@@ -165,7 +167,7 @@ class PelangganController extends Controller
 
     public function tagihancheck(Request $request)
     {
-        // VALIDASI yang benar:
+
         $request->validate([
             'id_penggunaan' => 'required',
             'bulan' => 'required',
@@ -177,9 +179,8 @@ class PelangganController extends Controller
 
         do {
             $id = random_int(1000000, 9999999);
-        } while (Pelanggan::where('id_tagihan', $id)->exists());
+        } while (Tagihan::where('id_tagihan', $id)->exists());
 
-        // SIMPAN ke tabel tagihans
         Tagihan::create([
             'id_tagihan' => $id,
             'id_penggunaan' => $request->id_penggunaan,
@@ -190,5 +191,84 @@ class PelangganController extends Controller
             'status' => 'Belum Bayar'
         ]);
         return redirect()->back()->with('success', 'Tagihan berhasil ditambahkan');
+    }
+
+
+    public function pembayaran()
+    {
+        $data = Pembayaran::with(['tagihan.penggunaan', 'pelanggan.tarif'])->get();
+        $pelanggan = Pelanggan::with('tarif')->get(); // Jika mau dipakai di select form
+        $tagihan = Tagihan::with('penggunaan')->get(); // Jika mau ditampilkan nama bulan/tahun
+
+        // dd($request->all());
+        return view('dashboard-pembayaran', compact('data', 'pelanggan', 'tagihan'));
+    }
+
+    public function pembayarancheck(Request $request)
+    {
+        $request->validate([
+            'id_tagihan' => 'required|exists:tagihans,id_tagihan',
+            'id_user' => 'required|exists:user,id_user',
+            'tanggal_pembayaran' => 'required|date',
+            'bukti' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Ambil data tagihan dan relasi penggunaan
+        $tagihan = Tagihan::with('penggunaan')->findOrFail($request->id_tagihan);
+
+        // Ambil id_pelanggan dari relasi penggunaan
+        $id_pelanggan = $tagihan->penggunaan->id_pelanggan;
+
+        // Ambil data pelanggan beserta tarifnya
+        $pelanggan = Pelanggan::with('tarif')->findOrFail($id_pelanggan);
+
+        // Hitung total bayar
+        $jumlah_meter = $tagihan->jumlah_meter;
+        $tarif_perkwh = $pelanggan->tarif->tarifperkwh;
+        $biaya_admin = 2500;
+        $total_bayar = ($jumlah_meter * $tarif_perkwh) + $biaya_admin;
+
+        // Upload bukti pembayaran ke storage/app/public/bukti_pembayaran
+        $buktiPath = $request->file('bukti')->store('bukti_pembayaran', 'public');
+
+        // Generate ID pembayaran unik
+        do {
+            $id = random_int(8000000, 9999999);
+        } while (Pembayaran::where('id_pembayaran', $id)->exists());
+
+        // Simpan data ke database
+        Pembayaran::create([
+            'id_pembayaran' => $id,
+            'id_pelanggan' => $id_pelanggan,
+            'id_tagihan' => $request->id_tagihan,
+            'id_user' => $request->id_user,
+            'tanggal_pembayaran' => $request->tanggal_pembayaran,
+            'biaya_admin' => $biaya_admin,
+            'total_bayar' => $total_bayar,
+            'bukti' => $buktiPath,
+        ]);
+
+        return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
+    }
+
+
+    // app/Http/Controllers/PelangganController.php
+
+    // ... (method Anda yang lain)
+
+    public function getTotalBayar($id_tagihan)
+    {
+        $tagihan = Tagihan::with('penggunaan', 'pelanggan.tarif')->find($id_tagihan);
+
+        if (!$tagihan) {
+            return response()->json(['error' => 'Tagihan tidak ditemukan'], 404);
+        }
+
+        $jumlah_meter = $tagihan->jumlah_meter;
+        $tarif_per_kwh = $tagihan->pelanggan->tarif->tarifperkwh ?? 0;
+
+        $total = $jumlah_meter * $tarif_per_kwh;
+
+        return response()->json(['total_bayar' => $total]);
     }
 }

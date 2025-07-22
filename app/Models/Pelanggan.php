@@ -12,5 +12,21 @@ class Pelanggan extends Model
     public $timestamps = false;
     protected $fillable = ['id_pelanggan','username', 'password', 'nomor_kwh', 'nama_pelanggan', 'alamat', 'id_tarif', 'id_level'];
 
+    public function penggunaan()
+    {
+        return $this->belongsTo(Penggunaan::class, 'id_penggunaan');
+    }
+
+    public function pelanggan()
+    {
+        return $this->hasMany(Pelanggan::class, 'id_pelanggan');
+    }
+    public function tarif()
+{
+    return $this->belongsTo(Tarif::class, 'id_tarif', 'id_tarif');
 }
+
+    
+}
+
 

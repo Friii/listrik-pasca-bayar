@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pelanggan;
 use App\Models\User;
+use App\Models\Tagihan;
+use App\Models\Pelanggan;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
+use function Laravel\Prompts\alert;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
-use function Laravel\Prompts\alert;
 
 class UserController extends Controller
 {
@@ -31,7 +33,9 @@ class UserController extends Controller
     {
         $totalUser = User::count();
         $totalPelanggan = Pelanggan::count();
-        return view('layout-dashboard', ['totalUser' => $totalUser, 'totalPelanggan' => $totalPelanggan]);
+        $totalPembayaran = Pembayaran::count();
+        $totalTagihan = Tagihan::count();
+        return view('layout-dashboard', ['totalUser' => $totalUser, 'totalPelanggan' => $totalPelanggan, 'totalPembayaran' =>$totalPembayaran, 'totalTagihan' =>$totalTagihan]);
     }
 
     public function landingPage()

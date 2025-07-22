@@ -21,8 +21,13 @@ Route::post('/dashboard-penggunaan', [PelangganController::class, 'penggunaanche
 
 Route::get('/dashboard-tagihan', [PelangganController::class, 'tagihan'])->name('tagihan.pelanggan');
 Route::post('/dashboard-tagihan', [PelangganController::class, 'tagihancheck'])->name('tagihancheck.pelanggan');
-
+Route::get('/dashboard-pembayaran', [PelangganController::class, 'pembayaran'])->name('pembayaran.pelanggan');
+Route::post('/dashboard-pembayaran', [PelangganController::class,'pembayarancheck'])->name('pembayarancheck.pelanggan');
 Route::get('/api/jumlah-meter/{id_pelanggan}', [PelangganController::class, 'getJumlahMeter']);
+
+Route::get('/get-total-bayar/{id_tagihan}', [PelangganController::class, 'getTotalBayar']);
+
+
 
 
 Route::middleware(['auth', 'ceklevel:1'])->group(function () {

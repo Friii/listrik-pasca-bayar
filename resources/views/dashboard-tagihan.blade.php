@@ -42,7 +42,12 @@
                 <img src="img/tagihan.png" alt="user" class="w-5 h-5 mr-2">
                 Data Tagihan
             </a>
-            <div class="relative top-[28rem] flex gap-2 justify-start">
+            <a href="/dashboard-pembayaran"
+                class="flex items-center p-2 text-gray-700 rounded hover:bg-blue-100 hover:text-blue-600">
+                <img src="img/payment-method.png" alt="user" class="w-5 h-5 mr-2">
+                Data Pembayaran
+            </a>
+            <div class="relative top-[23rem] flex gap-2 justify-start">
                 <a href="" class="flex"><img src="img/fachri.jpg" alt="profil"
                         class="w-12 h-12 rounded-full bg-cover">
                     <p class="text-2xl font-semibold text-blue-600 py-2 px-4">Fachri</p>
@@ -75,52 +80,60 @@
                 </div>
             </form>
 
-            <div class="w-full bg-white shadow-2xl mt-4 rounded-xl">
-                <div class="max-w-full p-4">
-                    <table class="w-full border border-collapse mt-8">
-                        <thead>
-                            <tr class="">
-                                <th class="border border-slate-300">No</th>
-                                <th class="border border-slate-300">Id Tagihan</th>
-                                <th class="border border-slate-300">Id Penggunaan</th>
-                                <th class="border border-slate-300">Nama Pelanggan</th>
-                                <th class="border border-slate-300">Bulan</th>
-                                <th class="border border-slate-300">Tahun</th>
-                                <th class="border border-slate-300">Jumlah Meter</th>
-                                <th class="border border-slate-300">Status</th>
-                                <th class="border border-slate-300">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $no = 1; @endphp
-                            @foreach ($data as $tagihan)
-                                <tr>
-                                    <td class="border border-slate-300">{{ $no++ }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->id_tagihan }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->id_penggunaan }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->pelanggan->nama_pelanggan }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->bulan }}</td>
-                                    <td class="border border-slate-300">{{ $tagihan->tahun }}</td>
-                                    <td class="border border-slate-300">
-                                        {{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}</td>
-                                        
-                                    <td class="border border-slate-300">{{ $tagihan->status }}</td>
-                                    <td class="border border-slate-300"><button onclick="openModal()"
-                                            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover"
-                                            style="background-image: url('img/edit.png')">
-                                        </button>
-                                        <button onclick="openModal()"
-                                            class="py-4 text-white font-semibold text-xl px-4 bg-blue-600 rounded-2xl hover:bg-blue-800 transition bg-cover"
-                                            style="background-image: url('img/edit.png')">
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+            <div class="w-full bg-white shadow-xl mt-6 rounded-xl overflow-x-auto">
+    <div class="p-6">
+        <table class="min-w-full text-left text-sm text-gray-800">
+            <thead>
+                <tr class="bg-sky-800 text-white uppercase text-xs tracking-wider">
+                    <th class="px-4 py-3">No</th>
+                    <th class="px-4 py-3">ID Tagihan</th>
+                    <th class="px-4 py-3">ID Penggunaan</th>
+                    <th class="px-4 py-3">Nama Pelanggan</th>
+                    <th class="px-4 py-3">Bulan</th>
+                    <th class="px-4 py-3">Tahun</th>
+                    <th class="px-4 py-3">Jumlah Meter</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @php $no = 1; @endphp
+                @foreach ($data as $tagihan)
+                    <tr class="hover:bg-gray-100 transition duration-150">
+                        <td class="px-4 py-3">{{ $no++ }}</td>
+                        <td class="px-4 py-3">{{ $tagihan->id_tagihan }}</td>
+                        <td class="px-4 py-3">{{ $tagihan->id_penggunaan }}</td>
+                        <td class="px-4 py-3">{{ $tagihan->pelanggan->nama_pelanggan }}</td>
+                        <td class="px-4 py-3">{{ $tagihan->bulan }}</td>
+                        <td class="px-4 py-3">{{ $tagihan->tahun }}</td>
+                        <td class="px-4 py-3">
+                            {{ $tagihan->penggunaan->meter_ahir - $tagihan->penggunaan->meter_awal }}
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                {{ $tagihan->status == 'Belum Bayar' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
+                                {{ $tagihan->status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-center flex justify-center space-x-2">
+                            <button onclick="openModal()"
+                                class="p-2 bg-yellow-500 hover:bg-yellow-600 rounded-full text-white transition duration-150"
+                                title="Edit">
+                                ✎
+                            </button>
+                            <button onclick="deleteData()"
+                                class="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition duration-150"
+                                title="Hapus">
+                                🗑
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
-            </div>
             <!-- Modal Tambah Pelanggan -->
             <div id="modalTagihan" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-xl w-[500px] p-6 relative">

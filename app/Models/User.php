@@ -21,4 +21,12 @@ class User extends Authenticatable
     protected $primaryKey = 'id_user';
     public $timestamps = false;
     protected $fillable = ['id_user','username', 'password', 'nama_admin', 'id_level'];
+
+    public function pelanggan()
+    {
+        // User ini memiliki satu data Pelanggan.
+        // Laravel akan mencari di tabel 'pelanggans' yang 'user_id'-nya
+        // sama dengan 'id' dari user ini.
+        return $this->hasOne(Pelanggan::class, 'user_id');
+    }
 }

@@ -36,11 +36,17 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+
+    // Tambahkan guard baru ini
+    'pelanggan' => [
+        'driver' => 'session',
+        'provider' => 'pelanggans', // Gunakan provider pelanggan
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -65,10 +71,10 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'pelanggans' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Pelanggan::class, // Model untuk Pelanggan
+        ],
     ],
 
     /*

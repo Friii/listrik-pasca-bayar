@@ -189,57 +189,54 @@ class PelangganController extends Controller
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required',
-        ]); // hasil true / false
+        ]);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+        // Coba login menggunakan guard 'pelanggan' yang sudah kita buat
+        if (Auth::guard('pelanggan')->attempt($credentials)) {
+            // Jika berhasil, Laravel akan menangani session secara otomatis
+            $request->session()->regenerate();
 
-            if ($user->id_level == 2) {
-                return redirect()->route('kelolaLandingPage');
-            }
-        }
-
-        $pelanggan = \App\Models\Pelanggan::where('username', $credentials['username'])->first();
-        if ($pelanggan && Hash::check($credentials['password'], $pelanggan->password)) {
-            // Login manual pelanggan
-            session(['pelanggan_id' => $pelanggan->id_pelanggan]);
+            // Redirect ke halaman yang dituju setelah login berhasil
             return redirect()->route('kelolaLandingPage');
         }
 
-        return back()->withErrors(['loginPelanggan' => 'Username atau password salah']);
+        // Jika kredensial salah, kembali ke halaman login dengan pesan error
+        return back()->withErrors([
+            'username' => 'Username atau password yang Anda masukkan salah.',
+        ])->onlyInput('username');
     }
 
     public function kelolaLandingPage(Request $request)
-{
-    // Ambil pelanggan dari session, bukan dari Auth
-    $pelangganLogin = Pelanggan::find(session('pelanggan_id'));
+    {
+        // SEKARANG, kita bisa mendapatkan pelanggan yang login dari Auth
+        $pelangganLogin = Auth::guard('pelanggan')->user();
 
-    if (!$pelangganLogin) {
-        return redirect()->route('loginPelanggan')->with('error', 'Data pelanggan tidak ditemukan.');
-    }
-
-    if ($request->isMethod('post')) {
-        $request->validate(['id_tagihan' => 'required']);
-
-        $tagihan = Tagihan::with('penggunaan.pelanggan.tarif')
-            ->where('id_tagihan', $request->id_tagihan)
-            ->first();
-
-        if (!$tagihan) {
-            return back()->withErrors(['id_tagihan' => 'Tagihan tidak ditemukan.']);
+        if (!$pelangganLogin) {
+            // Jika karena suatu hal tidak ada session, redirect ke login
+            return redirect()->route('loginPelanggan');
         }
 
-        if ($tagihan->penggunaan->pelanggan->id_pelanggan != $pelangganLogin->id_pelanggan) {
-            return back()->withErrors(['id_tagihan' => 'Anda tidak memiliki akses ke tagihan ini.']);
+        if ($request->isMethod('post')) {
+            $request->validate(['id_tagihan' => 'required']);
+
+            $tagihan = Tagihan::with('penggunaan.pelanggan.tarif')
+                ->where('id_tagihan', $request->id_tagihan)
+                ->first();
+
+            if (!$tagihan) {
+                return back()->withErrors(['id_tagihan' => 'Tagihan tidak ditemukan.']);
+            }
+
+            if ($tagihan->penggunaan->pelanggan->id_pelanggan != $pelangganLogin->id_pelanggan) {
+                return back()->withErrors(['id_tagihan' => 'Anda tidak memiliki akses ke tagihan ini.']);
+            }
+
+            return view('landing-page', [
+                'pelanggan' => $pelangganLogin,
+                'tagihan' => $tagihan
+            ]);
         }
 
-        return view('landing-page', [
-            'pelanggan' => $pelangganLogin,
-            'tagihan' => $tagihan
-        ]);
+        return view('landing-page', ['pelanggan' => $pelangganLogin]);
     }
-
-    return view('landing-page', ['pelanggan' => $pelangganLogin]);
-}
-
 }

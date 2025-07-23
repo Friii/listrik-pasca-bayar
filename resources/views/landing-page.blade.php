@@ -35,14 +35,14 @@
                 </div>
 
                 <!-- Chatbot -->
-                <button class="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition">
+                <a href="/chat-bot" class="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path
                             d="M7 8h10M7 12h6m-1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                     </svg>
                     <span class="hidden lg:inline">Chatbot</span>
-                </button>
+                </a>
             </nav>
 
         </div>

@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\LandingController;
 use App\Models\Tagihan;
 use App\Models\Pembayaran;
 use App\Models\Penggunaan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TarifController;
+use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PenggunaanController;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/login', [UserController::class, 'login'])->name('login');
 Route::get('/registration-admin', [UserController::class, 'register'])->name('register.admin');
@@ -127,3 +128,5 @@ Route::post('/login/pelanggan', [PelangganController::class, 'landingcheck'])->n
 Route::match(['get', 'post'], '/wattly', [PelangganController::class, 'kelolaLandingPage'])->name('kelolaLandingPage');
 
 Route::get('/login-pelanggan', [PelangganController::class, 'loginPelanggan'])->name('loginPelanggan');
+
+Route::get('/chat-bot', [ChatbotController::class, 'index'])->name('chatbot')->middleware('auth:pelanggan');

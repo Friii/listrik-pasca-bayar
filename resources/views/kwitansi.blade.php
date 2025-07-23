@@ -46,7 +46,7 @@
                     <h1 class="text-2xl font-bold text-gray-800">Kwitansi Pembayaran</h1>
                     <p class="text-sm text-gray-500">Tanggal: 22 Juli 2025</p>
                 </div>
-                <img src="https://www.svgrepo.com/show/354113/lightning-bolt.svg" class="w-10 h-10 opacity-70" alt="Logo">
+                <img src="img/logo.png" class="w-20 h-15 opacity-100" alt="Logo">
             </div>
 
             <!-- Info Pelanggan -->

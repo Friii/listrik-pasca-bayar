@@ -38,7 +38,7 @@
       </a>
 
       <!-- Pelanggan -->
-      <a href="{{ route('login.pelanggan') }}"
+      <a href="{{ route('loginPelanggan') }}"
          class="group bg-white/10 hover:bg-white/20 border border-white/30 p-6 rounded-2xl flex flex-col items-center transition-all duration-300 hover:scale-105 shadow-md">
         <svg class="w-12 h-12 mb-4 text-green-200 group-hover:text-green-100 transition" fill="none" stroke="currentColor" stroke-width="2"
              viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">

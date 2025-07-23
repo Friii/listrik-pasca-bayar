@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\Tagihan;
 use App\Models\Pelanggan;
 use App\Models\Pembayaran;
@@ -51,7 +52,7 @@ class PembayaranController extends Controller
             $id = random_int(8000000, 9999999);
         } while (Pembayaran::where('id_pembayaran', $id)->exists());
 
-        
+
         // Simpan data ke database
         Pembayaran::create([
             'id_pembayaran' => $id,
@@ -121,5 +122,43 @@ class PembayaranController extends Controller
         $pembayaran->delete();
 
         return redirect()->back()->with('success', 'Data pembayaran berhasil dihapus');
+    }
+
+    public function show($id)
+    {
+        $tagihan = Tagihan::with('pelanggan')->findOrFail($id);
+        return view('bayar', compact('tagihan'));
+    }
+
+    public function prosesBayar(Request $request)
+    {   
+        $tagihan = Tagihan::with('penggunaan')->findOrFail($request->id_tagihan);
+        $biaya_admin = 2500;
+        // Simpan file bukti
+        $buktiPath = $request->file('bukti')->store('bukti_pembayaran', 'public');
+        do {
+            $id = random_int(8000000, 9999999);
+        } while (Pembayaran::where('id_pembayaran', $id)->exists());
+
+        // Simpan ke tabel pembayaran (atau update tagihan)
+        Pembayaran::create([
+            'id_pembayaran' => $id,
+            'id_tagihan' => $request->id_tagihan,
+            'id_pelanggan' => $request->id_pelanggan,
+            'id_user' => 15828,
+            'biaya_admin' => $biaya_admin,
+            'total_bayar' => $request->total_bayar,
+            'tanggal_pembayaran' => $request->tanggal_pembayaran,
+            'bukti' => $buktiPath,
+            'status' => 'Menunggu Konfirmasi',
+        ]);
+
+        $tagihan = Tagihan::find($request->id_tagihan);
+        if ($tagihan) {
+            $tagihan->status = 'Berhasil Dibayar';
+            $tagihan->save();
+        }
+
+        return redirect()->route('kelolaLandingPage')->with('success', 'Pembayaran berhasil dikirim, menunggu konfirmasi.');
     }
 }

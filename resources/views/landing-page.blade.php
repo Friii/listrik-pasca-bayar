@@ -63,7 +63,7 @@
                     @csrf
                     <label for="id_tagihan" class="block text-sm font-medium text-gray-700">Masukkan ID Tagihan</label>
                     <input type="text" name="id_tagihan" id="id_tagihan" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none">
+                        class="w-full px-4 py-2 border border-gray-300 text-black rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none">
                     <button type="submit"
                         class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition">
                         🔍 Cek Tagihan
@@ -89,7 +89,8 @@
             <div class="grid grid-cols-2 gap-4 text-gray-700">
                 <p><span class="font-semibold">Nama:</span> {{ $pelanggan->nama_pelanggan }}</p>
                 <p><span class="font-semibold">Nomor KWH:</span> {{ $pelanggan->nomor_kwh }}</p>
-                <p><span class="font-semibold">Daya / Tarif:</span> {{ $pelanggan->tarif->daya }} - {{ $pelanggan->tarif->tarifperkwh }}</p>
+                <p><span class="font-semibold">Daya / Tarif:</span> {{ $pelanggan->tarif->daya }} -
+                    {{ $pelanggan->tarif->tarifperkwh }}</p>
                 <p><span class="font-semibold">Alamat:</span> {{ $pelanggan->alamat }}</p>
             </div>
 
@@ -103,19 +104,38 @@
                     <p><span class="font-semibold">Biaya Admin:</span> Rp 2.500</p>
                     <p class="col-span-2">
                         <span class="font-semibold">Status:</span>
-                        <span class="inline-block bg-red-100 text-red-600 text-sm font-semibold px-3 py-1 rounded-full">
+                        <span
+                            class="inline-block {{ $tagihan->status == 'Belum Bayar' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }} text-sm font-semibold px-3 py-1 rounded-full">
                             {{ $tagihan->status }}
                         </span>
                     </p>
                 </div>
             </div>
 
-            <div class="pt-4 text-right">
-                <button
-                    class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md transition">
-                    💳 Bayar Sekarang
-                </button>
+
+
+            <div class="pt-4 text-right flex justify-end gap-2">
+                @if ($tagihan->status == 'Berhasil Dibayar')
+                    <a href="" target="_blank"
+                        class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md transition">
+                        🖨️ Cetak Bukti
+                    </a>
+                @endif
+
+                <form action="{{ route('bayar.show', ['id' => $tagihan->id_tagihan]) }}" method="get">
+                    @csrf
+                    <input type="hidden" name="id_tagihan" value="{{ $tagihan->id_tagihan }}">
+                    <input type="hidden" name="id_pelanggan" value="{{ $pelanggan->id_pelanggan }}">
+
+                    <button type="submit"
+                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md transition">
+                        💳 Bayar Sekarang
+                    </button>
+                </form>
+
+
             </div>
+
         </div>
     @endif
 
@@ -125,8 +145,7 @@
     <div class="max-w-6xl mx-auto mt-12 bg-white rounded-xl shadow-md p-8 " data-aos="fade-up">
         <h2 class="text-4xl font-bold text-gray-800 mb-4 text-center">Cek Tagihan Listrik Terbaru 2025</h2>
         <p class="text-gray-600 mb-6 text-2xl">
-            Cara Cek Tagihan Listrik PLN Pascabayar Online di <span
-                class="font-semibold text-blue-600">Wattly.com</span>
+            Cara Cek Tagihan Listrik Pascabayar Online di <span class="font-semibold text-blue-600">Wattly.com</span>
         </p>
         <ul class="text-left text-gray-700 list-decimal list-inside space-y-2 text-xl">
             <li>Masukkan no ID pelanggan dan no HP kamu di kolom paling atas di halaman ini di kolom Tagihan Listrik.
@@ -148,7 +167,8 @@
             harus bolak-balik karena data atau persyaratan tidak lengkap. Bukankah kamu ingin proses yang lebih cepat
             dan praktis?</p>
 
-        <p class="text-gray-600 mb-6 text-xl text-justify">Wattly.com memberikan solusi untuk pelanggan yang malas antri
+        <p class="text-gray-600 mb-6 text-xl text-justify">Wattly.com memberikan solusi untuk pelanggan yang malas
+            antri
             mauapun keluar rumah hanya untuk membayar
             atau mengecek tagihan listrik. Disisi lain, masih banyak masyarakat yang bekerja di rumah ( work from home),
             anak-anak sekolah di rumah mengakibatkan tagihan listrik makin membengkak.</p>

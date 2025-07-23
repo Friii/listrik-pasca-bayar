@@ -82,6 +82,10 @@ Route::get('/kwitansi', function () {
     return view('kwitansi');
 });
 
+Route::get('/bayar/{id}', [PembayaranController::class, 'show'])->name('bayar.show');
+
+Route::post('/bayar/{id}', [PembayaranController::class, 'prosesBayar'])->name('bayar');
+
 // Route::get('/dashboard', function (){
 //     return view('layout-dashboard');
 // });
@@ -113,8 +117,8 @@ Route::get('/login-selection', function () {
 // Form login masing-masing
 Route::get('/login', [UserController::class, 'login'])->name('login'); // admin
 
-// halaman form login pelanggan
-Route::get('/login-pelanggan', [PelangganController::class, 'loginPelanggan'])->name('login.pelanggan');
+// // halaman form login pelanggan
+// Route::get('/login-pelanggan', [PelangganController::class, 'loginPelanggan'])->name('login.pelanggan');
 
 // proses login pelanggan
 Route::post('/login/pelanggan', [PelangganController::class, 'landingcheck'])->name('landingcheck');

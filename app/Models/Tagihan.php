@@ -34,4 +34,9 @@ class Tagihan extends Model
     {
         return $this->belongsTo(Penggunaan::class, 'id_penggunaan', 'id_penggunaan');
     }
+
+    public function user()
+    {
+        return $this->hasMany(User::class, 'id_user', 'id_user');
+    }
 }

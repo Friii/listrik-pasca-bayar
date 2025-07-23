@@ -38,6 +38,7 @@ class Pembayaran extends Model
         return $this->belongsTo(Tarif::class, 'id_tarif');
     }
     
+    
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
